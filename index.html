@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>政治價值測驗 — 平等 · 自由 · 民主 · 個人</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">POLITICAL VALUES SURVEY · 26 題</div>
+    <h1>你的政治座標</h1>
+    <p>回答 26 題,量測你在「平等」「自由」「民主」「個人」四個維度上的位置,並與各國政黨對照。</p>
+  </header>
+
+  <!-- ============ INTRO ============ -->
+  <section id="screen-intro">
+    <div class="intro-card">
+      <p>這份測驗依據 World Values Survey 題組改編,總共 26 題,大約需要 5-8 分鐘完成。</p>
+      <ul>
+        <li><strong>平等</strong>:對收入分配、政府再分配角色的態度</li>
+        <li><strong>民主</strong>:對民主體制、政治權威、監控權力的態度</li>
+        <li><strong>個人</strong>:對個人生活自主、道德議題的開放程度</li>
+        <li><strong>自由</strong>:由「民主」與「個人」兩者平均而來,代表政治自由與文化自由的綜合</li>
+      </ul>
+      <p>作答完成後,你的結果會被畫在座標圖上,並可選擇儲存到資料庫、與其他填答者的結果疊圖比較。</p>
+      <button class="btn" id="start-btn">開始測驗 →</button>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section id="screen-quiz" class="hidden">
+    <div class="progress-row">
+      <span id="progress-label">Q01 / 26</span>
+      <span>每題選一個最接近你想法的答案</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <div id="quiz-root"></div>
+  </section>
+
+  <!-- ============ RESULT ============ -->
+  <section id="screen-result" class="hidden">
+    <h2 style="font-family:'Noto Serif TC',serif; margin-bottom:4px;">你的四維分數</h2>
+    <div class="score-grid" id="score-grid"></div>
+
+    <div class="nickname-row">
+      <input type="text" id="nickname-input" placeholder="暱稱(選填,顯示在疊圖上)" maxlength="24">
+      <button class="btn" id="save-btn">儲存我的結果</button>
+    </div>
+    <div class="status-msg" id="save-status"></div>
+
+    <div class="chart-block">
+      <div class="chart-head">
+        <span class="chart-title">平等 × 自由</span>
+        <div class="toggle-group" data-chart="eqli">
+          <button data-mode="mine" class="active">只顯示我的點</button>
+          <button data-mode="all">+ 所有填答者</button>
+        </div>
+      </div>
+      <div id="chart-eqli"></div>
+    </div>
+
+    <div class="chart-block">
+      <div class="chart-head">
+        <span class="chart-title">個人 × 民主</span>
+        <div class="toggle-group" data-chart="indem">
+          <button data-mode="mine" class="active">只顯示我的點</button>
+          <button data-mode="all">+ 所有填答者</button>
+        </div>
+      </div>
+      <div id="chart-indem"></div>
+    </div>
+
+    <div class="footer-actions">
+      <button class="btn secondary" id="restart-btn">重新測驗</button>
+    </div>
+  </section>
+
+  <div class="footer-note">
+    灰點為各國政黨參考座標(取自 WVS Wave 7 分析)。你的座標以十字準星標示。若開啟「所有填答者」,藍色半透明點為其他人的歷史結果,即時自 Supabase 資料庫讀取。
+  </div>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
