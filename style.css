@@ -294,6 +294,7 @@ svg.chart {
 .chart .axis-label { font-family: 'Noto Sans TC', sans-serif; fill: var(--ink); font-weight: 700; font-size: 13px; }
 .chart .party-dot { fill: #9aa3ad; opacity: 0.55; }
 .chart .party-dot:hover { opacity: 1; }
+.chart .dot-click { cursor: pointer; }
 .chart .party-label { font-family: 'Noto Sans TC', sans-serif; font-size: 9px; fill: var(--ink-soft); pointer-events: none; }
 .chart .other-label { font-family: 'Noto Sans TC', sans-serif; font-size: 9px; fill: var(--c-liberty); pointer-events: none; }
 .chart .me-dot { fill: var(--c-democracy); stroke: var(--paper); stroke-width: 2; }
@@ -335,6 +336,47 @@ svg.chart {
 .nickname-row input:focus-visible { outline: 3px solid var(--c-liberty); outline-offset: 1px; }
 
 .hidden { display: none !important; }
+
+/* ---------- Dot click popover ---------- */
+.dot-popover {
+  position: fixed;
+  z-index: 50;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 12px 14px;
+  min-width: 150px;
+  max-width: 220px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+  --arrow-left: 50%;
+}
+.dot-popover-title {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(237,234,233,0.25);
+}
+.dot-popover-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  margin-top: 4px;
+}
+.dot-popover-row span { color: rgba(237,234,233,0.7); }
+.dot-popover::after {
+  content: "";
+  position: absolute;
+  left: var(--arrow-left);
+  width: 10px;
+  height: 10px;
+  background: var(--ink);
+  transform: translateX(-50%) rotate(45deg);
+}
+.dot-popover.arrow-bottom::after { bottom: -5px; }
+.dot-popover.arrow-top::after { top: -5px; }
 
 .footer-note {
   margin-top: 56px;
