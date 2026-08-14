@@ -213,7 +213,9 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, myPoint, otherPoints, showA
     const x = gx(p[xKey]);
     const y = gy(p[yKey]);
     const label = `${p.party}(${p.country})`;
-    partyDots += `<circle class="party-dot" cx="${x}" cy="${y}" r="4"><title>${label} — ${xLabel}:${p[xKey]} ${yLabel}:${p[yKey]}</title></circle>`;
+    const title = `${p.country} ${p.party}`;
+    partyDots += `<circle class="party-dot dot-click" cx="${x}" cy="${y}" r="4"
+      data-title="${title}" data-xlabel="${xLabel}" data-xval="${p[xKey]}" data-ylabel="${yLabel}" data-yval="${p[yKey]}"></circle>`;
     partyDots += `<text class="party-label" x="${x + 6}" y="${y - 5}">${label}</text>`;
   }
 
@@ -223,7 +225,8 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, myPoint, otherPoints, showA
       const x = gx(r[xKey]);
       const y = gy(r[yKey]);
       const label = r.nickname || "匿名";
-      otherDots += `<circle cx="${x}" cy="${y}" r="4" fill="#3B5BA5" opacity="0.35"><title>${label} — ${xLabel}:${r[xKey]} ${yLabel}:${r[yKey]}</title></circle>`;
+      otherDots += `<circle class="dot-click" cx="${x}" cy="${y}" r="4" fill="#3B5BA5" opacity="0.55"
+        data-title="${label}" data-xlabel="${xLabel}" data-xval="${r[xKey]}" data-ylabel="${yLabel}" data-yval="${r[yKey]}"></circle>`;
       otherDots += `<text class="other-label" x="${x + 6}" y="${y - 5}">${label}</text>`;
     }
   }
@@ -235,7 +238,8 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, myPoint, otherPoints, showA
     meMark = `
       <line class="me-cross" x1="${x - 10}" y1="${y}" x2="${x + 10}" y2="${y}"/>
       <line class="me-cross" x1="${x}" y1="${y - 10}" x2="${x}" y2="${y + 10}"/>
-      <circle class="me-dot" cx="${x}" cy="${y}" r="7"><title>你 — ${xLabel}:${myPoint[xKey]} ${yLabel}:${myPoint[yKey]}</title></circle>
+      <circle class="me-dot dot-click" cx="${x}" cy="${y}" r="7"
+        data-title="你" data-xlabel="${xLabel}" data-xval="${myPoint[xKey]}" data-ylabel="${yLabel}" data-yval="${myPoint[yKey]}"></circle>
       <text class="me-label" x="${x + 12}" y="${y - 10}">你</text>
     `;
   }
@@ -253,6 +257,7 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, myPoint, otherPoints, showA
 }
 
 function drawCharts() {
+  hidePopover();
   const eqliShowAll = chartMode.eqli === "all";
   const indemShowAll = chartMode.indem === "all";
 
@@ -265,6 +270,71 @@ function drawCharts() {
     myPoint: scores, otherPoints: historyResults, showAll: indemShowAll,
   });
 }
+
+// ---------------------------------------------------------------
+// Click-to-open popover for chart dots (speech-bubble style)
+// ---------------------------------------------------------------
+const popover = document.getElementById("dot-popover");
+const popoverTitle = popover.querySelector(".dot-popover-title");
+const popoverBody = popover.querySelector(".dot-popover-body");
+
+function showPopover(targetEl) {
+  const title = targetEl.getAttribute("data-title");
+  const xLabel = targetEl.getAttribute("data-xlabel");
+  const xVal = targetEl.getAttribute("data-xval");
+  const yLabel = targetEl.getAttribute("data-ylabel");
+  const yVal = targetEl.getAttribute("data-yval");
+
+  popoverTitle.textContent = title;
+  popoverBody.innerHTML = `
+    <div class="dot-popover-row"><span>${xLabel}</span><strong>${xVal}</strong></div>
+    <div class="dot-popover-row"><span>${yLabel}</span><strong>${yVal}</strong></div>
+  `;
+
+  popover.classList.remove("hidden");
+  // measure after making visible (but keep 0 opacity handled by CSS class if needed)
+  const rect = targetEl.getBoundingClientRect();
+  const pw = popover.offsetWidth;
+  const ph = popover.offsetHeight;
+  let left = rect.left + rect.width / 2 - pw / 2;
+  let top = rect.top - ph - 12;
+  let arrowSide = "bottom"; // triangle points down toward the dot by default
+
+  // clamp horizontally within viewport
+  const margin = 8;
+  if (left < margin) left = margin;
+  if (left + pw > window.innerWidth - margin) left = window.innerWidth - margin - pw;
+
+  // if not enough room above, place below the dot instead
+  if (top < margin) {
+    top = rect.bottom + 12;
+    arrowSide = "top";
+  }
+
+  popover.style.left = `${left}px`;
+  popover.style.top = `${top}px`;
+
+  // position the arrow to point at the dot's actual x position
+  const arrowLeft = rect.left + rect.width / 2 - left;
+  popover.style.setProperty("--arrow-left", `${arrowLeft}px`);
+  popover.classList.toggle("arrow-top", arrowSide === "top");
+  popover.classList.toggle("arrow-bottom", arrowSide === "bottom");
+}
+
+function hidePopover() {
+  popover.classList.add("hidden");
+}
+
+document.addEventListener("click", (e) => {
+  const dot = e.target.closest(".dot-click");
+  if (dot) {
+    showPopover(dot);
+  } else if (!e.target.closest("#dot-popover")) {
+    hidePopover();
+  }
+});
+window.addEventListener("resize", hidePopover);
+window.addEventListener("scroll", hidePopover, true);
 
 async function refreshHistoryAndDraw() {
   drawCharts(); // draw immediately with "mine" mode, don't block on network
