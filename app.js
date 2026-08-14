@@ -212,7 +212,9 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, myPoint, otherPoints, showA
   for (const p of PARTIES) {
     const x = gx(p[xKey]);
     const y = gy(p[yKey]);
-    partyDots += `<circle class="party-dot" cx="${x}" cy="${y}" r="4"><title>${p.party}(${p.country}) — ${xLabel}:${p[xKey]} ${yLabel}:${p[yKey]}</title></circle>`;
+    const label = `${p.party}(${p.country})`;
+    partyDots += `<circle class="party-dot" cx="${x}" cy="${y}" r="4"><title>${label} — ${xLabel}:${p[xKey]} ${yLabel}:${p[yKey]}</title></circle>`;
+    partyDots += `<text class="party-label" x="${x + 6}" y="${y - 5}">${label}</text>`;
   }
 
   let otherDots = "";
@@ -220,7 +222,9 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, myPoint, otherPoints, showA
     for (const r of otherPoints) {
       const x = gx(r[xKey]);
       const y = gy(r[yKey]);
-      otherDots += `<circle cx="${x}" cy="${y}" r="4" fill="#3B5BA5" opacity="0.35"><title>${r.nickname || "匿名"} — ${xLabel}:${r[xKey]} ${yLabel}:${r[yKey]}</title></circle>`;
+      const label = r.nickname || "匿名";
+      otherDots += `<circle cx="${x}" cy="${y}" r="4" fill="#3B5BA5" opacity="0.35"><title>${label} — ${xLabel}:${r[xKey]} ${yLabel}:${r[yKey]}</title></circle>`;
+      otherDots += `<text class="other-label" x="${x + 6}" y="${y - 5}">${label}</text>`;
     }
   }
 
@@ -232,6 +236,7 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, myPoint, otherPoints, showA
       <line class="me-cross" x1="${x - 10}" y1="${y}" x2="${x + 10}" y2="${y}"/>
       <line class="me-cross" x1="${x}" y1="${y - 10}" x2="${x}" y2="${y + 10}"/>
       <circle class="me-dot" cx="${x}" cy="${y}" r="7"><title>你 — ${xLabel}:${myPoint[xKey]} ${yLabel}:${myPoint[yKey]}</title></circle>
+      <text class="me-label" x="${x + 12}" y="${y - 10}">你</text>
     `;
   }
 
