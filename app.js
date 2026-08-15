@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./config.js";
-import { PARTIES, QUESTIONS, computeScores } from "./data.js";
+import { PARTIES, QUESTIONS, computeScores, COUNTRY_NAME_ZH, findNearestParty, economicLabel, politicalSystemLabel } from "./data.js";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -87,18 +87,12 @@ function renderQuestion() {
       <div class="scale-endlabels"><span>從不正當</span><span>總是正當</span></div>
     `;
   } else if (q.scale === "agree4") {
-    const labels = ["非常不同意", "不同意", "同意", "非常同意"];
     bodyHtml = `
       <p class="q-text">${q.text}</p>
-      <div class="agree-row" role="group" aria-label="同意程度">
-        ${labels
-          .map((lab, i) => {
-            const val = i + 1;
-            const sel = answers[q.id] === val ? "selected" : "";
-            return `<button class="agree-btn ${sel}" data-qid="${q.id}" data-val="${val}">${lab}</button>`;
-          })
-          .join("")}
+      <div class="scale-row of4" role="group" aria-label="1到4同意程度">
+        ${[1, 2, 3, 4].map((n) => scaleBtn(q.id, n, answers[q.id])).join("")}
       </div>
+      <div class="scale-endlabels"><span>非常不同意</span><span>非常同意</span></div>
     `;
   }
 
@@ -123,10 +117,8 @@ function renderQuestion() {
       const val = Number(btn.getAttribute("data-val"));
       answers[qid] = val;
       renderQuestion();
-      // auto-advance shortly after selection for scale questions
-      if (q.scale !== "agree4") {
-        setTimeout(() => goNext(), 180);
-      }
+      // auto-advance shortly after any answer selection
+      setTimeout(() => goNext(), 180);
     });
   });
 
@@ -163,16 +155,75 @@ function goNext() {
 async function finishQuiz() {
   scores = computeScores(answers);
   showScreen("result");
-  renderScoreGrid();
+  renderIdeologyPanel();
   await refreshHistoryAndDraw();
 }
 
-function renderScoreGrid() {
-  document.getElementById("score-grid").innerHTML = `
-    <div class="score-cell eq"><div class="label">平等 Equality</div><div class="value">${scores.equality}</div></div>
-    <div class="score-cell li"><div class="label">自由 Liberty</div><div class="value">${scores.liberty}</div></div>
-    <div class="score-cell de"><div class="label">民主 Democracy</div><div class="value">${scores.democracy}</div></div>
-    <div class="score-cell in"><div class="label">個人 Individual</div><div class="value">${scores.individual}</div></div>
+// value 假設落在 1-10 尺度上,轉成 0-100 的百分比位置
+function toPercent(value) {
+  const p = ((value - 1) / 9) * 100;
+  return Math.max(0, Math.min(100, p));
+}
+
+function bigBarHTML({ leftLabel, rightLabel, percent, tier, valueDisplay }) {
+  return `
+    <div class="ibar-row">
+      <div class="ibar-tier">${tier}<span class="ibar-tier-value">(${valueDisplay})</span></div>
+      <div class="ibar-track big">
+        <div class="ibar-fill-left" style="width:${percent}%"></div>
+        <div class="ibar-fill-right" style="width:${100 - percent}%"></div>
+        <div class="ibar-marker" style="left:${percent}%"></div>
+      </div>
+      <div class="ibar-endlabels"><span>${leftLabel}</span><span>${rightLabel}</span></div>
+    </div>
+  `;
+}
+
+function smallBarHTML({ label, percent, valueDisplay }) {
+  return `
+    <div class="ibar-row small">
+      <div class="ibar-small-header"><span>${label}</span><strong>${valueDisplay}</strong></div>
+      <div class="ibar-track small">
+        <div class="ibar-fill-single" style="width:${percent}%"></div>
+      </div>
+    </div>
+  `;
+}
+
+function renderIdeologyPanel() {
+  const { party, distance } = findNearestParty(scores);
+  let matchSentence;
+  if (distance <= 1.5) {
+    const countryZh = COUNTRY_NAME_ZH[party.country] || party.country;
+    matchSentence = `你的意識形態和 <strong>${countryZh}${party.party}</strong> 支持者最接近`;
+  } else {
+    matchSentence = "你的意識形態不接近以下任何政黨";
+  }
+
+  const econTier = economicLabel(scores.equality);
+  const polityTier = politicalSystemLabel(scores.liberty);
+
+  // 經濟軸:平等分數越高越「左」,所以左端點放高分那一側
+  const econPercent = 100 - toPercent(scores.equality);
+  // 政治體制軸:自由分數越高越靠「自由」端(放右側)
+  const polityPercent = toPercent(scores.liberty);
+
+  document.getElementById("ideology-panel").innerHTML = `
+    <p class="match-sentence">${matchSentence}</p>
+
+    ${bigBarHTML({
+      leftLabel: "極左", rightLabel: "極右",
+      percent: econPercent, tier: econTier, valueDisplay: scores.equality,
+    })}
+    ${bigBarHTML({
+      leftLabel: "威權", rightLabel: "自由",
+      percent: polityPercent, tier: polityTier, valueDisplay: scores.liberty,
+    })}
+
+    <div class="ibar-small-group">
+      ${smallBarHTML({ label: "政治自由", percent: toPercent(scores.democracy), valueDisplay: scores.democracy })}
+      ${smallBarHTML({ label: "個人選擇", percent: toPercent(scores.individual), valueDisplay: scores.individual })}
+    </div>
   `;
 }
 
