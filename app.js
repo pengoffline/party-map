@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./config.js";
-import { PARTIES, QUESTIONS, computeScores, COUNTRY_NAME_ZH, findNearestParty, economicLabel, politicalSystemLabel } from "./data.js";
+import { PARTIES, QUESTIONS, computeScores, COUNTRY_NAME_ZH, findNearestParty, economicLabel, politicalSystemLabel, democracyLabel, individualLabel, getTierLabel } from "./data.js";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -179,10 +179,10 @@ function bigBarHTML({ leftLabel, rightLabel, percent, tier, valueDisplay }) {
   `;
 }
 
-function smallBarHTML({ label, percent, valueDisplay }) {
+function smallBarHTML({ label, percent, valueDisplay, tier }) {
   return `
     <div class="ibar-row small">
-      <div class="ibar-small-header"><span>${label}</span><strong>${valueDisplay}</strong></div>
+      <div class="ibar-small-header"><span>${label}</span><strong>${valueDisplay}<span class="ibar-tier-value">(${tier})</span></strong></div>
       <div class="ibar-track small">
         <div class="ibar-fill-single" style="width:${percent}%"></div>
       </div>
@@ -216,13 +216,13 @@ function renderIdeologyPanel() {
       percent: econPercent, tier: econTier, valueDisplay: scores.equality,
     })}
     ${bigBarHTML({
-      leftLabel: "威權", rightLabel: "自由",
+      leftLabel: "極權", rightLabel: "自由意志",
       percent: polityPercent, tier: polityTier, valueDisplay: scores.liberty,
     })}
 
     <div class="ibar-small-group">
-      ${smallBarHTML({ label: "政治自由", percent: toPercent(scores.democracy), valueDisplay: scores.democracy })}
-      ${smallBarHTML({ label: "個人選擇", percent: toPercent(scores.individual), valueDisplay: scores.individual })}
+      ${smallBarHTML({ label: "政治自由", percent: toPercent(scores.democracy), valueDisplay: scores.democracy, tier: democracyLabel(scores.democracy) })}
+      ${smallBarHTML({ label: "個人選擇", percent: toPercent(scores.individual), valueDisplay: scores.individual, tier: individualLabel(scores.individual) })}
     </div>
   `;
 }
@@ -266,7 +266,7 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, myPoint, otherPoints, showA
     const countryZh = COUNTRY_NAME_ZH[p.country] || p.country;
     const title = `${countryZh} ${p.party}`;
     partyDots += `<circle class="party-dot dot-click" cx="${x}" cy="${y}" r="4"
-      data-title="${title}" data-xlabel="${xLabel}" data-xval="${p[xKey]}" data-ylabel="${yLabel}" data-yval="${p[yKey]}"></circle>`;
+      data-title="${title}" data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${p[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${p[yKey]}"></circle>`;
   }
 
   let otherDots = "";
@@ -276,7 +276,7 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, myPoint, otherPoints, showA
       const y = gy(r[yKey]);
       const label = r.nickname || "匿名";
       otherDots += `<circle class="dot-click" cx="${x}" cy="${y}" r="4" fill="#3B5BA5" opacity="0.55"
-        data-title="${label}" data-xlabel="${xLabel}" data-xval="${r[xKey]}" data-ylabel="${yLabel}" data-yval="${r[yKey]}"></circle>`;
+        data-title="${label}" data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${r[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${r[yKey]}"></circle>`;
     }
   }
 
@@ -288,7 +288,7 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, myPoint, otherPoints, showA
       <line class="me-cross" x1="${x - 10}" y1="${y}" x2="${x + 10}" y2="${y}"/>
       <line class="me-cross" x1="${x}" y1="${y - 10}" x2="${x}" y2="${y + 10}"/>
       <circle class="me-dot dot-click" cx="${x}" cy="${y}" r="7"
-        data-title="你" data-xlabel="${xLabel}" data-xval="${myPoint[xKey]}" data-ylabel="${yLabel}" data-yval="${myPoint[yKey]}"></circle>
+        data-title="你" data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${myPoint[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${myPoint[yKey]}"></circle>
     `;
   }
 
@@ -328,15 +328,20 @@ const popoverBody = popover.querySelector(".dot-popover-body");
 
 function showPopover(targetEl) {
   const title = targetEl.getAttribute("data-title");
+  const xDim = targetEl.getAttribute("data-xdim");
   const xLabel = targetEl.getAttribute("data-xlabel");
   const xVal = targetEl.getAttribute("data-xval");
+  const yDim = targetEl.getAttribute("data-ydim");
   const yLabel = targetEl.getAttribute("data-ylabel");
   const yVal = targetEl.getAttribute("data-yval");
 
+  const xTier = getTierLabel(xDim, Number(xVal));
+  const yTier = getTierLabel(yDim, Number(yVal));
+
   popoverTitle.textContent = title;
   popoverBody.innerHTML = `
-    <div class="dot-popover-row"><span>${xLabel}</span><strong>${xVal}</strong></div>
-    <div class="dot-popover-row"><span>${yLabel}</span><strong>${yVal}</strong></div>
+    <div class="dot-popover-row"><span>${xLabel}</span><strong>${xVal}<span class="dot-popover-tier">(${xTier})</span></strong></div>
+    <div class="dot-popover-row"><span>${yLabel}</span><strong>${yVal}<span class="dot-popover-tier">(${yTier})</span></strong></div>
   `;
 
   popover.classList.remove("hidden");
