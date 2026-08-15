@@ -146,3 +146,57 @@ export function computeScores(answers) {
     liberty: liberty !== null ? Math.round(liberty * 100) / 100 : null,
   };
 }
+
+// ============================================================
+// 國家代碼 → 中文
+// ============================================================
+export const COUNTRY_NAME_ZH = {
+  TW: "台灣", GE: "德國", RU: "俄羅斯", JP: "日本", GB: "英國",
+  CA: "加拿大", US: "美國", HK: "香港", AU: "澳洲", KR: "韓國", MY: "馬來西亞",
+};
+
+// ============================================================
+// 找出座標最接近的政黨(四維歐氏距離)
+// ============================================================
+export function findNearestParty(scores) {
+  const dims = ["equality", "liberty", "democracy", "individual"];
+  let best = null;
+  let bestDist = Infinity;
+  for (const p of PARTIES) {
+    let sumSq = 0;
+    for (const d of dims) {
+      const diff = scores[d] - p[d];
+      sumSq += diff * diff;
+    }
+    const dist = Math.sqrt(sumSq);
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = p;
+    }
+  }
+  return { party: best, distance: Math.round(bestDist * 100) / 100 };
+}
+
+// ============================================================
+// 分數 → 光譜評語
+// ============================================================
+export function economicLabel(v) {
+  if (v <= 3.0) return "極右";
+  if (v <= 4.0) return "右翼";
+  if (v <= 5.0) return "中間偏右";
+  if (v <= 5.9) return "中間";
+  if (v <= 6.9) return "中間偏左";
+  if (v <= 7.9) return "左翼";
+  return "極左";
+}
+
+// 草稿版本,依「自由」分數(民主+個人平均)決定,區間結構比照經濟軸,可再調整
+export function politicalSystemLabel(v) {
+  if (v <= 3.0) return "極威權";
+  if (v <= 4.0) return "威權";
+  if (v <= 5.0) return "偏威權";
+  if (v <= 5.9) return "中間";
+  if (v <= 6.9) return "偏自由";
+  if (v <= 7.9) return "自由";
+  return "極自由";
+}
