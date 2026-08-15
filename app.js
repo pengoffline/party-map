@@ -195,7 +195,7 @@ function renderIdeologyPanel() {
   let matchSentence;
   if (distance <= 1.5) {
     const countryZh = COUNTRY_NAME_ZH[party.country] || party.country;
-    matchSentence = `你的意識形態和 <strong>${countryZh}${party.party}</strong> 支持者最接近`;
+    matchSentence = `你的意識形態和 <strong>${countryZh} ${party.party}</strong> 支持者最接近`;
   } else {
     matchSentence = "你的意識形態不接近以下任何政黨";
   }
@@ -263,11 +263,10 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, myPoint, otherPoints, showA
   for (const p of PARTIES) {
     const x = gx(p[xKey]);
     const y = gy(p[yKey]);
-    const label = `${p.party}(${p.country})`;
-    const title = `${p.country} ${p.party}`;
+    const countryZh = COUNTRY_NAME_ZH[p.country] || p.country;
+    const title = `${countryZh} ${p.party}`;
     partyDots += `<circle class="party-dot dot-click" cx="${x}" cy="${y}" r="4"
       data-title="${title}" data-xlabel="${xLabel}" data-xval="${p[xKey]}" data-ylabel="${yLabel}" data-yval="${p[yKey]}"></circle>`;
-    partyDots += `<text class="party-label" x="${x + 6}" y="${y - 5}">${label}</text>`;
   }
 
   let otherDots = "";
@@ -278,7 +277,6 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, myPoint, otherPoints, showA
       const label = r.nickname || "匿名";
       otherDots += `<circle class="dot-click" cx="${x}" cy="${y}" r="4" fill="#3B5BA5" opacity="0.55"
         data-title="${label}" data-xlabel="${xLabel}" data-xval="${r[xKey]}" data-ylabel="${yLabel}" data-yval="${r[yKey]}"></circle>`;
-      otherDots += `<text class="other-label" x="${x + 6}" y="${y - 5}">${label}</text>`;
     }
   }
 
@@ -291,7 +289,6 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, myPoint, otherPoints, showA
       <line class="me-cross" x1="${x}" y1="${y - 10}" x2="${x}" y2="${y + 10}"/>
       <circle class="me-dot dot-click" cx="${x}" cy="${y}" r="7"
         data-title="你" data-xlabel="${xLabel}" data-xval="${myPoint[xKey]}" data-ylabel="${yLabel}" data-yval="${myPoint[yKey]}"></circle>
-      <text class="me-label" x="${x + 12}" y="${y - 10}">你</text>
     `;
   }
 
