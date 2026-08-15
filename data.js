@@ -156,10 +156,10 @@ export const COUNTRY_NAME_ZH = {
 };
 
 // ============================================================
-// 找出座標最接近的政黨(四維歐氏距離)
+// 找出座標最接近的政黨(只看「平等 x 自由」兩維歐氏距離)
 // ============================================================
 export function findNearestParty(scores) {
-  const dims = ["equality", "liberty", "democracy", "individual"];
+  const dims = ["equality", "liberty"];
   let best = null;
   let bestDist = Infinity;
   for (const p of PARTIES) {
@@ -190,13 +190,42 @@ export function economicLabel(v) {
   return "極左";
 }
 
-// 草稿版本,依「自由」分數(民主+個人平均)決定,區間結構比照經濟軸,可再調整
+// 「政治體制」(自由分數,即民主+個人平均),區間結構與經濟軸相同
 export function politicalSystemLabel(v) {
-  if (v <= 3.0) return "極威權";
+  if (v <= 3.0) return "極權";
   if (v <= 4.0) return "威權";
-  if (v <= 5.0) return "偏威權";
+  if (v <= 5.0) return "偏向威權";
   if (v <= 5.9) return "中間";
-  if (v <= 6.9) return "偏自由";
+  if (v <= 6.9) return "偏向自由";
   if (v <= 7.9) return "自由";
-  return "極自由";
+  return "自由意志";
+}
+
+// 「政治自由」(民主分數)
+export function democracyLabel(v) {
+  if (v <= 3.0) return "極權";
+  if (v <= 5.0) return "威權";
+  if (v <= 6.4) return "混合";
+  if (v <= 7.9) return "有限民主";
+  return "完全民主";
+}
+
+// 「個人選擇」(個人分數)
+export function individualLabel(v) {
+  if (v <= 3.0) return "反動";
+  if (v <= 4.5) return "保守";
+  if (v <= 5.9) return "中立";
+  if (v <= 7.9) return "進步";
+  return "基進";
+}
+
+// 依維度名稱(equality/liberty/democracy/individual)取得對應評語
+export function getTierLabel(dimension, v) {
+  switch (dimension) {
+    case "equality": return economicLabel(v);
+    case "liberty": return politicalSystemLabel(v);
+    case "democracy": return democracyLabel(v);
+    case "individual": return individualLabel(v);
+    default: return "";
+  }
 }
