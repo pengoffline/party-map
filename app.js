@@ -165,9 +165,10 @@ function toPercent(value) {
   return Math.max(0, Math.min(100, p));
 }
 
-function bigBarHTML({ leftLabel, rightLabel, percent, tier, valueDisplay }) {
+function bigBarHTML({ axisTitle, leftLabel, rightLabel, percent, tier, valueDisplay }) {
   return `
     <div class="ibar-row">
+      <div class="ibar-axis-title">${axisTitle}</div>
       <div class="ibar-tier">${tier}<span class="ibar-tier-value">(${valueDisplay})</span></div>
       <div class="ibar-track big">
         <div class="ibar-fill-left" style="width:${percent}%"></div>
@@ -179,13 +180,14 @@ function bigBarHTML({ leftLabel, rightLabel, percent, tier, valueDisplay }) {
   `;
 }
 
-function smallBarHTML({ label, percent, valueDisplay, tier }) {
+function smallBarHTML({ label, percent, valueDisplay, tier, leftLabel, rightLabel }) {
   return `
     <div class="ibar-row small">
-      <div class="ibar-small-header"><span>${label}</span><strong>${valueDisplay}<span class="ibar-tier-value">(${tier})</span></strong></div>
+      <div class="ibar-small-header"><span>${label}</span><strong>${tier}<span class="ibar-tier-value">(${valueDisplay})</span></strong></div>
       <div class="ibar-track small">
         <div class="ibar-fill-single" style="width:${percent}%"></div>
       </div>
+      <div class="ibar-endlabels"><span>${leftLabel}</span><span>${rightLabel}</span></div>
     </div>
   `;
 }
@@ -205,24 +207,32 @@ function renderIdeologyPanel() {
 
   // 經濟軸:平等分數越高越「左」,所以左端點放高分那一側
   const econPercent = 100 - toPercent(scores.equality);
-  // 政治體制軸:自由分數越高越靠「自由」端(放右側)
+  // 社會軸:自由分數越高越靠「自由意志」端(放右側)
   const polityPercent = toPercent(scores.liberty);
 
   document.getElementById("ideology-panel").innerHTML = `
     <p class="match-sentence">${matchSentence}</p>
 
     ${bigBarHTML({
-      leftLabel: "極左", rightLabel: "極右",
+      axisTitle: "經濟：[極左~極右]",
+      leftLabel: "平等", rightLabel: "市場",
       percent: econPercent, tier: econTier, valueDisplay: scores.equality,
     })}
     ${bigBarHTML({
-      leftLabel: "極權", rightLabel: "自由意志",
+      axisTitle: "社會：[極權~自由意志]",
+      leftLabel: "威權", rightLabel: "自由",
       percent: polityPercent, tier: polityTier, valueDisplay: scores.liberty,
     })}
 
     <div class="ibar-small-group">
-      ${smallBarHTML({ label: "政治自由", percent: toPercent(scores.democracy), valueDisplay: scores.democracy, tier: democracyLabel(scores.democracy) })}
-      ${smallBarHTML({ label: "個人選擇", percent: toPercent(scores.individual), valueDisplay: scores.individual, tier: individualLabel(scores.individual) })}
+      ${smallBarHTML({
+        label: "政治體制", percent: toPercent(scores.democracy), valueDisplay: scores.democracy,
+        tier: democracyLabel(scores.democracy), leftLabel: "威權", rightLabel: "民主",
+      })}
+      ${smallBarHTML({
+        label: "個人選擇", percent: toPercent(scores.individual), valueDisplay: scores.individual,
+        tier: individualLabel(scores.individual), leftLabel: "傳統", rightLabel: "進步",
+      })}
     </div>
   `;
 }
@@ -233,13 +243,13 @@ function renderIdeologyPanel() {
 const CHART_SIZE = 640;
 const MARGIN = { top: 24, right: 24, bottom: 48, left: 52 };
 const PLOT = CHART_SIZE - MARGIN.left - MARGIN.right;
-const MIN_V = 2, MAX_V = 9;
+const MIN_V = 1, MAX_V = 10;
 
 function scalePos(v) {
   return ((v - MIN_V) / (MAX_V - MIN_V)) * PLOT;
 }
 
-function buildChartSVG({ xKey, yKey, xLabel, yLabel, myPoint, otherPoints, showAll }) {
+function buildChartSVG({ xKey, yKey, xLabel, yLabel, poleLabels, myPoint, otherPoints, showAll }) {
   const w = CHART_SIZE;
   const h = CHART_SIZE;
   const gx = (v) => MARGIN.left + scalePos(v);
@@ -254,10 +264,7 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, myPoint, otherPoints, showA
     gridLines += `<text x="${x}" y="${h - MARGIN.bottom + 18}" font-size="11" text-anchor="middle">${v}</text>`;
     gridLines += `<text x="${MARGIN.left - 10}" y="${y + 4}" font-size="11" text-anchor="end">${v}</text>`;
   }
-  // center reference lines at 5.5
-  const cx = gx(5.5), cy = gy(5.5);
-  gridLines += `<line x1="${cx}" y1="${MARGIN.top}" x2="${cx}" y2="${h - MARGIN.bottom}" stroke="#B9B2AA" stroke-width="1" stroke-dasharray="4 4"/>`;
-  gridLines += `<line x1="${MARGIN.left}" y1="${cy}" x2="${w - MARGIN.right}" y2="${cy}" stroke="#B9B2AA" stroke-width="1" stroke-dasharray="4 4"/>`;
+  // center reference lines removed per user request
 
   let partyDots = "";
   for (const p of PARTIES) {
@@ -292,9 +299,21 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, myPoint, otherPoints, showA
     `;
   }
 
+  let poleText = "";
+  if (poleLabels) {
+    const { left, right, top, bottom } = poleLabels;
+    const midX = MARGIN.left + PLOT / 2;
+    const midY = MARGIN.top + PLOT / 2;
+    poleText += `<text class="pole-label" x="${midX}" y="${MARGIN.top + 20}" text-anchor="middle">${top}</text>`;
+    poleText += `<text class="pole-label" x="${midX}" y="${h - MARGIN.bottom - 12}" text-anchor="middle">${bottom}</text>`;
+    poleText += `<text class="pole-label" x="${MARGIN.left + 14}" y="${midY}" text-anchor="start">${left}</text>`;
+    poleText += `<text class="pole-label" x="${w - MARGIN.right - 14}" y="${midY}" text-anchor="end">${right}</text>`;
+  }
+
   return `
     <svg class="chart" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
       ${gridLines}
+      ${poleText}
       ${partyDots}
       ${otherDots}
       ${meMark}
@@ -310,11 +329,13 @@ function drawCharts() {
   const indemShowAll = chartMode.indem === "all";
 
   document.getElementById("chart-eqli").innerHTML = buildChartSVG({
-    xKey: "equality", yKey: "liberty", xLabel: "平等", yLabel: "自由",
+    xKey: "equality", yKey: "liberty", xLabel: "經濟", yLabel: "社會",
+    poleLabels: { left: "市場", right: "平等", top: "自由", bottom: "威權" },
     myPoint: scores, otherPoints: historyResults, showAll: eqliShowAll,
   });
   document.getElementById("chart-indem").innerHTML = buildChartSVG({
-    xKey: "individual", yKey: "democracy", xLabel: "個人", yLabel: "民主",
+    xKey: "democracy", yKey: "individual", xLabel: "政治體制", yLabel: "個人選擇",
+    poleLabels: { left: "威權", right: "民主", top: "進步", bottom: "傳統" },
     myPoint: scores, otherPoints: historyResults, showAll: indemShowAll,
   });
 }
