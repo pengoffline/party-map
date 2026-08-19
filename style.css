@@ -230,14 +230,6 @@ body {
 
 .ibar-row { margin-bottom: 22px; }
 .ibar-row:last-child { margin-bottom: 0; }
-.ibar-axis-title {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  color: var(--ink-soft);
-  text-align: center;
-  margin-bottom: 4px;
-}
 .ibar-tier {
   font-family: 'Noto Serif TC', serif;
   font-weight: 700;
@@ -279,11 +271,20 @@ body {
   color: var(--ink-soft);
   margin-top: 6px;
 }
+.ibar-explanation {
+  font-size: 12.5px;
+  margin: 8px 0 0;
+  line-height: 1.5;
+}
+.ibar-explanation.placeholder {
+  color: var(--ink-soft);
+  font-style: italic;
+}
 
 .ibar-small-group {
   margin-top: 26px;
   padding-top: 20px;
-  border-top: 1px dashed var(--rule);
+  border-top: 1px solid var(--rule);
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
@@ -295,6 +296,18 @@ body {
   margin-bottom: 6px;
 }
 .ibar-small-header strong { font-family: 'JetBrains Mono', monospace; }
+
+.ibar-overall-note {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.ibar-overall-note.placeholder {
+  color: var(--ink-soft);
+  font-style: italic;
+}
 
 @media (max-width: 480px) {
   .ibar-small-group { grid-template-columns: 1fr; }
@@ -309,11 +322,34 @@ body {
   flex-wrap: wrap;
   gap: 10px;
 }
+.chart-title-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
 .chart-title {
   font-family: 'Noto Serif TC', serif;
   font-weight: 700;
   font-size: 18px;
 }
+.info-btn {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink-soft);
+  background: transparent;
+  color: var(--ink-soft);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.info-btn:hover { border-color: var(--ink); color: var(--ink); }
+.info-btn:focus-visible { outline: 3px solid var(--c-liberty); outline-offset: 2px; }
 .toggle-group {
   display: inline-flex;
   border: 1.5px solid var(--ink);
