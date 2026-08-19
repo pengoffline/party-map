@@ -213,7 +213,7 @@ export function democracyLabel(v) {
 // 「個人選擇」(個人分數)
 export function individualLabel(v) {
   if (v <= 3.0) return "反動";
-  if (v <= 4.5) return "保守";
+  if (v <= 4.5) return "傳統";
   if (v <= 5.9) return "中立";
   if (v <= 7.9) return "進步";
   return "基進";
