@@ -165,22 +165,22 @@ function toPercent(value) {
   return Math.max(0, Math.min(100, p));
 }
 
-function bigBarHTML({ axisTitle, leftLabel, rightLabel, percent, tier, valueDisplay }) {
+function bigBarHTML({ axisName, leftLabel, rightLabel, percent, tier, valueDisplay, explanationPlaceholder }) {
   return `
     <div class="ibar-row">
-      <div class="ibar-axis-title">${axisTitle}</div>
-      <div class="ibar-tier">${tier}<span class="ibar-tier-value">(${valueDisplay})</span></div>
+      <div class="ibar-tier">${axisName}：${tier}<span class="ibar-tier-value">(${valueDisplay})</span></div>
       <div class="ibar-track big">
         <div class="ibar-fill-left" style="width:${percent}%"></div>
         <div class="ibar-fill-right" style="width:${100 - percent}%"></div>
         <div class="ibar-marker" style="left:${percent}%"></div>
       </div>
       <div class="ibar-endlabels"><span>${leftLabel}</span><span>${rightLabel}</span></div>
+      <p class="ibar-explanation placeholder">${explanationPlaceholder}</p>
     </div>
   `;
 }
 
-function smallBarHTML({ label, percent, valueDisplay, tier, leftLabel, rightLabel }) {
+function smallBarHTML({ label, percent, valueDisplay, tier, leftLabel, rightLabel, explanationPlaceholder }) {
   return `
     <div class="ibar-row small">
       <div class="ibar-small-header"><span>${label}</span><strong>${tier}<span class="ibar-tier-value">(${valueDisplay})</span></strong></div>
@@ -188,6 +188,7 @@ function smallBarHTML({ label, percent, valueDisplay, tier, leftLabel, rightLabe
         <div class="ibar-fill-single" style="width:${percent}%"></div>
       </div>
       <div class="ibar-endlabels"><span>${leftLabel}</span><span>${rightLabel}</span></div>
+      <p class="ibar-explanation placeholder">${explanationPlaceholder}</p>
     </div>
   `;
 }
@@ -214,34 +215,42 @@ function renderIdeologyPanel() {
     <p class="match-sentence">${matchSentence}</p>
 
     ${bigBarHTML({
-      axisTitle: "經濟：[極左~極右]",
+      axisName: "經濟",
       leftLabel: "平等", rightLabel: "市場",
       percent: econPercent, tier: econTier, valueDisplay: scores.equality,
+      explanationPlaceholder: "（請自行填寫「極左」到「極右」等各段落的說明文字）",
     })}
     ${bigBarHTML({
-      axisTitle: "社會：[極權~自由意志]",
+      axisName: "社會",
       leftLabel: "威權", rightLabel: "自由",
       percent: polityPercent, tier: polityTier, valueDisplay: scores.liberty,
+      explanationPlaceholder: "（請自行填寫「極權」到「自由意志」等各段落的說明文字）",
     })}
 
     <div class="ibar-small-group">
       ${smallBarHTML({
         label: "政治體制", percent: toPercent(scores.democracy), valueDisplay: scores.democracy,
         tier: democracyLabel(scores.democracy), leftLabel: "威權", rightLabel: "民主",
+        explanationPlaceholder: "（請自行填寫「極權」到「完全民主」等各段落的說明文字）",
       })}
       ${smallBarHTML({
         label: "個人選擇", percent: toPercent(scores.individual), valueDisplay: scores.individual,
         tier: individualLabel(scores.individual), leftLabel: "傳統", rightLabel: "進步",
+        explanationPlaceholder: "（請自行填寫「反動」到「基進」等各段落的說明文字）",
       })}
+    </div>
+
+    <div class="ibar-overall-note placeholder">
+      （這裡放不會隨結果改變的總體說明文字,例如整份測驗的計分邏輯或四個維度的關係,請自行填寫）
     </div>
   `;
 }
 
 // ---------------------------------------------------------------
-// Chart rendering (SVG, range 2-9, gridline every 1.0)
+// Chart rendering (SVG, range 1-10, gridline every 1.0)
 // ---------------------------------------------------------------
-const CHART_SIZE = 640;
-const MARGIN = { top: 24, right: 24, bottom: 48, left: 52 };
+const CHART_SIZE = 680;
+const MARGIN = { top: 40, right: 46, bottom: 62, left: 70 };
 const PLOT = CHART_SIZE - MARGIN.left - MARGIN.right;
 const MIN_V = 1, MAX_V = 10;
 
@@ -264,7 +273,10 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, poleLabels, myPoint, otherP
     gridLines += `<text x="${x}" y="${h - MARGIN.bottom + 18}" font-size="11" text-anchor="middle">${v}</text>`;
     gridLines += `<text x="${MARGIN.left - 10}" y="${y + 4}" font-size="11" text-anchor="end">${v}</text>`;
   }
-  // center reference lines removed per user request
+  // 中線:1-10 尺度的中點是 5.5
+  const cx = gx(5.5), cy = gy(5.5);
+  gridLines += `<line x1="${cx}" y1="${MARGIN.top}" x2="${cx}" y2="${h - MARGIN.bottom}" stroke="#B9B2AA" stroke-width="1" stroke-dasharray="4 4"/>`;
+  gridLines += `<line x1="${MARGIN.left}" y1="${cy}" x2="${w - MARGIN.right}" y2="${cy}" stroke="#B9B2AA" stroke-width="1" stroke-dasharray="4 4"/>`;
 
   let partyDots = "";
   for (const p of PARTIES) {
@@ -304,10 +316,10 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, poleLabels, myPoint, otherP
     const { left, right, top, bottom } = poleLabels;
     const midX = MARGIN.left + PLOT / 2;
     const midY = MARGIN.top + PLOT / 2;
-    poleText += `<text class="pole-label" x="${midX}" y="${MARGIN.top + 20}" text-anchor="middle">${top}</text>`;
-    poleText += `<text class="pole-label" x="${midX}" y="${h - MARGIN.bottom - 12}" text-anchor="middle">${bottom}</text>`;
-    poleText += `<text class="pole-label" x="${MARGIN.left + 14}" y="${midY}" text-anchor="start">${left}</text>`;
-    poleText += `<text class="pole-label" x="${w - MARGIN.right - 14}" y="${midY}" text-anchor="end">${right}</text>`;
+    poleText += `<text class="pole-label" x="${midX}" y="${MARGIN.top - 14}" text-anchor="middle">${top}</text>`;
+    poleText += `<text class="pole-label" x="${midX}" y="${h - 12}" text-anchor="middle">${bottom}</text>`;
+    poleText += `<text class="pole-label" x="${14}" y="${midY}" text-anchor="start">${left}</text>`;
+    poleText += `<text class="pole-label" x="${w - 14}" y="${midY}" text-anchor="end">${right}</text>`;
   }
 
   return `
@@ -317,8 +329,6 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, poleLabels, myPoint, otherP
       ${partyDots}
       ${otherDots}
       ${meMark}
-      <text class="axis-label" x="${MARGIN.left + PLOT / 2}" y="${h - 10}" text-anchor="middle">${xLabel}</text>
-      <text class="axis-label" x="${16}" y="${MARGIN.top + PLOT / 2}" text-anchor="middle" transform="rotate(-90 16 ${MARGIN.top + PLOT / 2})">${yLabel}</text>
     </svg>
   `;
 }
@@ -334,8 +344,8 @@ function drawCharts() {
     myPoint: scores, otherPoints: historyResults, showAll: eqliShowAll,
   });
   document.getElementById("chart-indem").innerHTML = buildChartSVG({
-    xKey: "democracy", yKey: "individual", xLabel: "政治體制", yLabel: "個人選擇",
-    poleLabels: { left: "威權", right: "民主", top: "進步", bottom: "傳統" },
+    xKey: "individual", yKey: "democracy", xLabel: "個人選擇", yLabel: "政治體制",
+    poleLabels: { left: "傳統", right: "進步", top: "民主", bottom: "威權" },
     myPoint: scores, otherPoints: historyResults, showAll: indemShowAll,
   });
 }
@@ -347,7 +357,7 @@ const popover = document.getElementById("dot-popover");
 const popoverTitle = popover.querySelector(".dot-popover-title");
 const popoverBody = popover.querySelector(".dot-popover-body");
 
-function showPopover(targetEl) {
+function showDotPopover(targetEl) {
   const title = targetEl.getAttribute("data-title");
   const xDim = targetEl.getAttribute("data-xdim");
   const xLabel = targetEl.getAttribute("data-xlabel");
@@ -364,7 +374,18 @@ function showPopover(targetEl) {
     <div class="dot-popover-row"><span>${xLabel}</span><strong>${xVal}<span class="dot-popover-tier">(${xTier})</span></strong></div>
     <div class="dot-popover-row"><span>${yLabel}</span><strong>${yVal}<span class="dot-popover-tier">(${yTier})</span></strong></div>
   `;
+  positionPopover(targetEl);
+}
 
+function showInfoPopover(targetEl) {
+  const title = targetEl.getAttribute("data-info-title");
+  const body = targetEl.getAttribute("data-info-body");
+  popoverTitle.textContent = title;
+  popoverBody.innerHTML = `<p class="dot-popover-text">${body}</p>`;
+  positionPopover(targetEl);
+}
+
+function positionPopover(targetEl) {
   popover.classList.remove("hidden");
   // measure after making visible (but keep 0 opacity handled by CSS class if needed)
   const rect = targetEl.getBoundingClientRect();
@@ -388,7 +409,7 @@ function showPopover(targetEl) {
   popover.style.left = `${left}px`;
   popover.style.top = `${top}px`;
 
-  // position the arrow to point at the dot's actual x position
+  // position the arrow to point at the target's actual x position
   const arrowLeft = rect.left + rect.width / 2 - left;
   popover.style.setProperty("--arrow-left", `${arrowLeft}px`);
   popover.classList.toggle("arrow-top", arrowSide === "top");
@@ -401,8 +422,11 @@ function hidePopover() {
 
 document.addEventListener("click", (e) => {
   const dot = e.target.closest(".dot-click");
+  const infoBtn = e.target.closest(".info-btn");
   if (dot) {
-    showPopover(dot);
+    showDotPopover(dot);
+  } else if (infoBtn) {
+    showInfoPopover(infoBtn);
   } else if (!e.target.closest("#dot-popover")) {
     hidePopover();
   }
