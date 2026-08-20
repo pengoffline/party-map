@@ -132,34 +132,30 @@ body {
   padding: 32px 28px;
   margin-bottom: 24px;
 }
-.q-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  display: inline-block;
-  margin-bottom: 14px;
-  color: #fff;
-}
-.q-tag.dim-equality { background: var(--c-equality); }
-.q-tag.dim-democracy { background: var(--c-democracy); }
-.q-tag.dim-individual { background: var(--c-individual); }
-
 .q-text {
   font-family: 'Noto Serif TC', serif;
   font-weight: 500;
   font-size: 20px;
+  margin: 0 0 20px;
+}
+
+.q-item {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--ink);
   margin: 0 0 24px;
 }
 
 .pair-labels {
   display: flex;
   justify-content: space-between;
-  font-size: 13.5px;
-  color: var(--ink-soft);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ink);
   gap: 16px;
-  margin-bottom: 10px;
+  margin-bottom: 24px;
 }
 .pair-labels span:first-child { text-align: left; }
 .pair-labels span:last-child { text-align: right; }
