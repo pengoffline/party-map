@@ -4,8 +4,6 @@ import { PARTIES, QUESTIONS, computeScores, COUNTRY_NAME_ZH, findNearestParty, e
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const DIM_LABEL = { equality: "平等", democracy: "民主", individual: "個人" };
-
 // ---------------------------------------------------------------
 // State
 // ---------------------------------------------------------------
@@ -48,16 +46,24 @@ const quizRoot = document.getElementById("quiz-root");
 const progressFill = document.getElementById("progress-fill");
 const progressLabel = document.getElementById("progress-label");
 
+const GROUP_STEM = {
+  1: "你比較支持以下的哪個敘述？",
+  2: "你認為以下政策或制度有多重要？",
+  3: "你有多同意以下政策或制度？",
+  4: "你認為以下敘述是完全不正當、還是總是正當的？",
+};
+
 function renderQuestion() {
   const q = QUESTIONS[currentIndex];
   progressLabel.textContent = `Q${String(currentIndex + 1).padStart(2, "0")} / ${QUESTIONS.length}`;
   progressFill.style.width = `${(currentIndex / QUESTIONS.length) * 100}%`;
 
-  const dimTag = `<span class="q-tag dim-${q.dimension}">${DIM_LABEL[q.dimension]}</span>`;
+  const stem = GROUP_STEM[q.group];
   let bodyHtml = "";
 
   if (q.scale === "pair10") {
     bodyHtml = `
+      <p class="q-text">${stem}</p>
       <div class="pair-labels"><span>${q.left}</span><span>${q.right}</span></div>
       <div class="scale-row" role="group" aria-label="1到10選擇">
         ${Array.from({ length: 10 }, (_, i) => i + 1)
@@ -68,7 +74,8 @@ function renderQuestion() {
     `;
   } else if (q.scale === "importance10") {
     bodyHtml = `
-      <p class="q-text">${q.text}</p>
+      <p class="q-text">${stem}</p>
+      <p class="q-item">${q.text}</p>
       <div class="scale-row" role="group" aria-label="1到10重要程度">
         ${Array.from({ length: 10 }, (_, i) => i + 1)
           .map((n) => scaleBtn(q.id, n, answers[q.id]))
@@ -78,7 +85,8 @@ function renderQuestion() {
     `;
   } else if (q.scale === "justify10") {
     bodyHtml = `
-      <p class="q-text">${q.text}</p>
+      <p class="q-text">${stem}</p>
+      <p class="q-item">${q.text}</p>
       <div class="scale-row" role="group" aria-label="1到10正當程度">
         ${Array.from({ length: 10 }, (_, i) => i + 1)
           .map((n) => scaleBtn(q.id, n, answers[q.id]))
@@ -88,7 +96,8 @@ function renderQuestion() {
     `;
   } else if (q.scale === "agree4") {
     bodyHtml = `
-      <p class="q-text">${q.text}</p>
+      <p class="q-text">${stem}</p>
+      <p class="q-item">${q.text}</p>
       <div class="scale-row of4" role="group" aria-label="1到4同意程度">
         ${[1, 2, 3, 4].map((n) => scaleBtn(q.id, n, answers[q.id])).join("")}
       </div>
@@ -98,8 +107,6 @@ function renderQuestion() {
 
   quizRoot.innerHTML = `
     <div class="q-card">
-      ${dimTag}
-      ${q.scale === "pair10" ? "" : ""}
       ${bodyHtml}
     </div>
     <div class="nav-row">
