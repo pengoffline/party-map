@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./config.js";
-import { PARTIES, QUESTIONS, computeScores, COUNTRY_NAME_ZH, findNearestParty, economicLabel, politicalSystemLabel, democracyLabel, individualLabel, getTierLabel } from "./data.js";
+import { PARTIES, QUESTIONS, computeScores, COUNTRY_NAME_ZH, findNearestParty, economicLabel, politicalSystemLabel, democracyLabel, individualLabel, getTierLabel, ECONOMIC_EXPLANATIONS, DEMOCRACY_EXPLANATIONS, INDIVIDUAL_EXPLANATIONS, SOCIAL_EXPLANATION_FIXED } from "./data.js";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -218,25 +218,25 @@ function renderIdeologyPanel() {
       axisName: "經濟",
       leftLabel: "平等", rightLabel: "市場",
       percent: econPercent, tier: econTier, valueDisplay: scores.equality,
-      explanationPlaceholder: "（請自行填寫「極左」到「極右」等各段落的說明文字）",
+      explanationPlaceholder: ECONOMIC_EXPLANATIONS[econTier] || "",
     })}
     ${bigBarHTML({
       axisName: "社會",
       leftLabel: "威權", rightLabel: "自由",
       percent: polityPercent, tier: polityTier, valueDisplay: scores.liberty,
-      explanationPlaceholder: "（請自行填寫「極權」到「自由意志」等各段落的說明文字）",
+      explanationPlaceholder: SOCIAL_EXPLANATION_FIXED,
     })}
 
     <div class="ibar-small-group">
       ${smallBarHTML({
         label: "政治體制", percent: toPercent(scores.democracy), valueDisplay: scores.democracy,
         tier: democracyLabel(scores.democracy), leftLabel: "威權", rightLabel: "民主",
-        explanationPlaceholder: "（請自行填寫「極權」到「完全民主」等各段落的說明文字）",
+        explanationPlaceholder: DEMOCRACY_EXPLANATIONS[democracyLabel(scores.democracy)] || "",
       })}
       ${smallBarHTML({
         label: "個人選擇", percent: toPercent(scores.individual), valueDisplay: scores.individual,
         tier: individualLabel(scores.individual), leftLabel: "傳統", rightLabel: "進步",
-        explanationPlaceholder: "（請自行填寫「反動」到「基進」等各段落的說明文字）",
+        explanationPlaceholder: INDIVIDUAL_EXPLANATIONS[individualLabel(scores.individual)] || "",
       })}
     </div>
 
