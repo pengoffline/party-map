@@ -81,6 +81,30 @@ body {
 }
 .intro-card li { margin-bottom: 6px; }
 
+/* ---------- 通用章節樣式(供其他頁面擴充使用) ---------- */
+.section-heading {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 700;
+  font-size: 22px;
+  margin: 48px 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--ink);
+}
+section:first-of-type .section-heading { margin-top: 0; }
+
+.content-card {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  padding: 28px;
+}
+.content-card ul {
+  padding-left: 20px;
+  margin: 16px 0;
+}
+.content-card li { margin-bottom: 6px; }
+.content-card p:first-child { margin-top: 0; }
+.content-card p:last-child { margin-bottom: 0; }
+
 .btn {
   font-family: 'Noto Sans TC', sans-serif;
   font-weight: 700;
@@ -448,6 +472,12 @@ svg.chart {
   font-size: 13px;
   margin-top: 4px;
 }
+.dot-popover-n {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(237,234,233,0.6);
+  margin-bottom: 6px;
+}
 .dot-popover-row span { color: rgba(237,234,233,0.7); }
 .dot-popover-tier {
   font-family: 'Noto Sans TC', sans-serif;
@@ -467,6 +497,19 @@ svg.chart {
 }
 .dot-popover.arrow-bottom::after { bottom: -5px; }
 .dot-popover.arrow-top::after { top: -5px; }
+
+.notes-block {
+  background: #FFFFFF;
+  border: 1px solid var(--rule);
+  padding: 28px;
+  margin: 32px 0;
+  min-height: 120px;
+}
+.notes-block .placeholder {
+  color: var(--ink-soft);
+  text-align: center;
+  margin: 0;
+}
 
 .footer-note {
   margin-top: 56px;
