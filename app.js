@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./config.js";
-import { PARTIES, QUESTIONS, computeScores, COUNTRY_NAME_ZH, findNearestParty, economicLabel, politicalSystemLabel, democracyLabel, individualLabel, getTierLabel, ECONOMIC_EXPLANATIONS, DEMOCRACY_EXPLANATIONS, INDIVIDUAL_EXPLANATIONS, SOCIAL_EXPLANATION_FIXED } from "./data.js";
+import { PARTIES, QUESTIONS, computeScores, COUNTRY_NAME_ZH, findNearestParty, economicLabel, politicalSystemLabel, democracyLabel, individualLabel, getTierLabel, ECONOMIC_EXPLANATIONS, DEMOCRACY_EXPLANATIONS, INDIVIDUAL_EXPLANATIONS, SOCIAL_EXPLANATION_FIXED, PARTY_META } from "./data.js";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -290,9 +290,11 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, poleLabels, myPoint, otherP
     const x = gx(p[xKey]);
     const y = gy(p[yKey]);
     const countryZh = COUNTRY_NAME_ZH[p.country] || p.country;
-    const title = `${countryZh} ${p.party}`;
+    const meta = PARTY_META[`${p.country}_${p.party}`];
+    const title = meta ? `${countryZh} ${p.party} (${meta.year})` : `${countryZh} ${p.party}`;
+    const nAttr = meta ? ` data-n="${meta.n}"` : "";
     partyDots += `<circle class="party-dot dot-click" cx="${x}" cy="${y}" r="4"
-      data-title="${title}" data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${p[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${p[yKey]}"></circle>`;
+      data-title="${title}"${nAttr} data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${p[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${p[yKey]}"></circle>`;
   }
 
   let otherDots = "";
@@ -366,6 +368,7 @@ const popoverBody = popover.querySelector(".dot-popover-body");
 
 function showDotPopover(targetEl) {
   const title = targetEl.getAttribute("data-title");
+  const n = targetEl.getAttribute("data-n");
   const xDim = targetEl.getAttribute("data-xdim");
   const xLabel = targetEl.getAttribute("data-xlabel");
   const xVal = targetEl.getAttribute("data-xval");
@@ -377,7 +380,9 @@ function showDotPopover(targetEl) {
   const yTier = getTierLabel(yDim, Number(yVal));
 
   popoverTitle.textContent = title;
+  const nRow = n ? `<div class="dot-popover-n">N=${n}</div>` : "";
   popoverBody.innerHTML = `
+    ${nRow}
     <div class="dot-popover-row"><span>${xLabel}</span><strong>${xVal}<span class="dot-popover-tier">(${xTier})</span></strong></div>
     <div class="dot-popover-row"><span>${yLabel}</span><strong>${yVal}<span class="dot-popover-tier">(${yTier})</span></strong></div>
   `;
