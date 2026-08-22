@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./config.js";
-import { PARTIES, COUNTRIES, QUESTIONS, computeScores, COUNTRY_NAME_ZH, findNearestParty, economicLabel, politicalSystemLabel, democracyLabel, individualLabel, getTierLabel, ECONOMIC_EXPLANATIONS, DEMOCRACY_EXPLANATIONS, INDIVIDUAL_EXPLANATIONS, SOCIAL_EXPLANATION_FIXED } from "./data.js";
+import { PARTIES, COUNTRIES, QUESTIONS, DEMOGRAPHIC_QUESTIONS, computeScores, COUNTRY_NAME_ZH, findNearestParty, economicLabel, politicalSystemLabel, democracyLabel, individualLabel, getTierLabel, ECONOMIC_EXPLANATIONS, DEMOCRACY_EXPLANATIONS, INDIVIDUAL_EXPLANATIONS, SOCIAL_EXPLANATION_FIXED } from "./data.js";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -9,6 +9,8 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // ---------------------------------------------------------------
 let currentIndex = 0;
 const answers = {};
+const demoAnswers = {};
+let demoIndex = 0;
 let scores = null;
 let historyResults = []; // fetched from supabase
 // 每張圖各自獨立控制三個圖層開關:政黨(party)、國家(country)、所有填答者(all)
@@ -38,7 +40,9 @@ document.getElementById("start-btn").addEventListener("click", () => {
 
 document.getElementById("restart-btn").addEventListener("click", () => {
   for (const k in answers) delete answers[k];
+  for (const k in demoAnswers) delete demoAnswers[k];
   currentIndex = 0;
+  demoIndex = 0;
   scores = null;
   showScreen("intro");
 });
@@ -155,6 +159,113 @@ function goNext() {
   if (currentIndex < QUESTIONS.length - 1) {
     currentIndex += 1;
     renderQuestion();
+  } else {
+    demoIndex = 0;
+    renderDemoQuestion();
+  }
+}
+
+// ---------------------------------------------------------------
+// 人口統計題(第 27 題起):不計分、不顯示在網站,只在儲存時併入 Supabase
+// ---------------------------------------------------------------
+function currentDemoSteps() {
+  return DEMOGRAPHIC_QUESTIONS.filter((q) => {
+    if (q.id === "party_support") {
+      return demoAnswers.residence === "台灣" || demoAnswers.residence === "香港";
+    }
+    return true;
+  });
+}
+
+function renderDemoQuestion() {
+  const steps = currentDemoSteps();
+  const q = steps[demoIndex];
+  const totalSteps = QUESTIONS.length + steps.length;
+  const currentNum = QUESTIONS.length + demoIndex + 1;
+  progressLabel.textContent = `Q${String(currentNum).padStart(2, "0")} / ${totalSteps}`;
+  progressFill.style.width = `${((currentNum - 1) / totalSteps) * 100}%`;
+
+  const stem = q.kind === "conditionalChoice" ? q.stemByValue[demoAnswers.residence] : q.stem;
+  let bodyHtml = `<p class="q-text">${stem}</p><p class="q-note">${q.note}</p>`;
+
+  if (q.kind === "scale10Text") {
+    bodyHtml += `
+      <div class="scale-row" role="group" aria-label="1到10定位">
+        ${Array.from({ length: 10 }, (_, i) => i + 1)
+          .map((n) => scaleBtn(q.id, n, demoAnswers[q.id]))
+          .join("")}
+      </div>
+      <div class="scale-endlabels"><span>${q.leftEnd}</span><span>${q.rightEnd}</span></div>
+    `;
+  } else if (q.kind === "choice" || q.kind === "conditionalChoice") {
+    const options = q.kind === "conditionalChoice" ? (q.optionsByValue[demoAnswers.residence] || []) : q.options;
+    bodyHtml += `
+      <div class="choice-list" role="group">
+        ${options
+          .map((opt) => {
+            const sel = demoAnswers[q.id] === opt ? "selected" : "";
+            return `<button class="choice-btn ${sel}" data-demo-qid="${q.id}" data-demo-val="${opt}">${opt}</button>`;
+          })
+          .join("")}
+      </div>
+    `;
+  }
+
+  quizRoot.innerHTML = `
+    <div class="q-card">
+      ${bodyHtml}
+    </div>
+    <div class="nav-row">
+      <button class="btn secondary" id="prev-btn">← 上一題</button>
+      <span class="nav-hint">${demoAnswers[q.id] !== undefined ? "已作答" : "請選擇一個答案"}</span>
+      <button class="btn" id="next-btn" ${demoAnswers[q.id] === undefined ? "disabled" : ""}>
+        ${demoIndex === steps.length - 1 ? "完成測驗 →" : "下一題 →"}
+      </button>
+    </div>
+  `;
+
+  quizRoot.querySelectorAll("[data-demo-qid]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const qid = btn.getAttribute("data-demo-qid");
+      const val = btn.getAttribute("data-demo-val");
+      demoAnswers[qid] = val;
+      if (qid === "residence") {
+        delete demoAnswers.party_support; // 居住地改變,先前選的政黨支持度選項可能不再適用
+      }
+      renderDemoQuestion();
+    });
+  });
+  quizRoot.querySelectorAll("[data-qid]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const qid = btn.getAttribute("data-qid");
+      const val = Number(btn.getAttribute("data-val"));
+      demoAnswers[qid] = val;
+      renderDemoQuestion();
+      setTimeout(() => goNextDemo(), 180);
+    });
+  });
+
+  document.getElementById("prev-btn").addEventListener("click", goPrevDemo);
+  document.getElementById("next-btn").addEventListener("click", goNextDemo);
+}
+
+function goPrevDemo() {
+  if (demoIndex > 0) {
+    demoIndex -= 1;
+    renderDemoQuestion();
+  } else {
+    currentIndex = QUESTIONS.length - 1;
+    renderQuestion();
+  }
+}
+
+function goNextDemo() {
+  const steps = currentDemoSteps();
+  const q = steps[demoIndex];
+  if (demoAnswers[q.id] === undefined) return;
+  if (demoIndex < steps.length - 1) {
+    demoIndex += 1;
+    renderDemoQuestion();
   } else {
     finishQuiz();
   }
@@ -514,9 +625,12 @@ saveBtn.addEventListener("click", async () => {
       .single();
     if (error) throw error;
 
-    // best-effort: store raw answers privately (insert-only table)
+    // best-effort: store raw answers privately (insert-only table),
+    // 人口統計題(不影響分析結果)也一併存在這裡,不進公開的 quiz_results
     try {
-      await supabase.from("quiz_answers_private").insert([{ result_id: data.id, answers }]);
+      await supabase.from("quiz_answers_private").insert([
+        { result_id: data.id, answers: { items: answers, demographics: demoAnswers } },
+      ]);
     } catch (e) {
       console.warn("原始作答儲存失敗(不影響主要結果)", e);
     }
