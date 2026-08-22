@@ -1,516 +1,287 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./config.js";
-import { PARTIES, QUESTIONS, computeScores, COUNTRY_NAME_ZH, findNearestParty, economicLabel, politicalSystemLabel, democracyLabel, individualLabel, getTierLabel, ECONOMIC_EXPLANATIONS, DEMOCRACY_EXPLANATIONS, INDIVIDUAL_EXPLANATIONS, SOCIAL_EXPLANATION_FIXED, PARTY_META } from "./data.js";
+// ============================================================
+// 政黨座標資料(來自世界政黨大圖工作簿,靜態背景點)
+// ============================================================
+export const PARTIES = [
+  { country: "TW", party: "我", equality: 6.75, liberty: 7.67, democracy: 7.9, individual: 7.25, year: null, n: null },
+  { country: "GE", party: "左翼黨", equality: 6.49, liberty: 7.92, democracy: 8.5, individual: 7.14, year: 2018, n: 117 },
+  { country: "RU", party: "共產黨", equality: 6.35, liberty: 5.18, democracy: 6.11, individual: 4.05, year: 2017, n: 141 },
+  { country: "JP", party: "共產黨", equality: 6.34, liberty: 6.53, democracy: 8.16, individual: 4.7, year: 2019, n: 45 },
+  { country: "RU", party: "自民黨", equality: 6.19, liberty: 5.43, democracy: 6.19, individual: 4.47, year: 2017, n: 154 },
+  { country: "GE", party: "綠黨", equality: 6.1, liberty: 7.94, democracy: 8.44, individual: 7.25, year: 2018, n: 194 },
+  { country: "CA", party: "新民主黨", equality: 6.1, liberty: 7.45, democracy: 7.55, individual: 7.16, year: 2020, n: 654 },
+  { country: "CA", party: "魁人政團", equality: 6.07, liberty: 7.53, democracy: 7.96, individual: 6.9, year: 2020, n: 240 },
+  { country: "GB", party: "蘇格蘭民族黨", equality: 6.07, liberty: 7.58, democracy: 7.63, individual: 7.33, year: 2022, n: 175 },
+  { country: "RU", party: "統一黨", equality: 6.04, liberty: 5.21, democracy: 6.22, individual: 4.0, year: 2017, n: 890 },
+  { country: "GB", party: "工黨", equality: 6.02, liberty: 7.25, democracy: 7.42, individual: 6.87, year: 2022, n: 702 },
+  { country: "GE", party: "社民黨", equality: 5.94, liberty: 7.26, democracy: 8.13, individual: 6.19, year: 2018, n: 255 },
+  { country: "GB", party: "綠黨", equality: 5.92, liberty: 7.73, democracy: 7.75, individual: 7.5, year: 2022, n: 178 },
+  { country: "KR", party: "共同民主黨", equality: 5.78, liberty: 5.43, democracy: 6.95, individual: 3.71, year: 2018, n: 533 },
+  { country: "JP", party: "立憲民主黨", equality: 5.76, liberty: 6.52, democracy: 8.07, individual: 4.78, year: 2019, n: 125 },
+  { country: "CA", party: "自由黨", equality: 5.7, liberty: 7.05, democracy: 7.35, individual: 6.54, year: 2020, n: 1004 },
+  { country: "AU", party: "綠黨", equality: 5.67, liberty: 6.99, democracy: 7.56, individual: 7.69, year: 2018, n: 236 },
+  { country: "KR", party: "自由韓國黨", equality: 5.66, liberty: 5.03, democracy: 6.49, individual: 3.37, year: 2018, n: 183 },
+  { country: "US", party: "綠黨", equality: 5.65, liberty: 6.81, democracy: 7.24, individual: 6.17, year: 2017, n: 57 },
+  { country: "GE", party: "基民盟", equality: 5.57, liberty: 7.02, democracy: 7.96, individual: 5.88, year: 2018, n: 433 },
+  { country: "HK", party: "青年新政", equality: 5.47, liberty: 6.68, democracy: 7.69, individual: 5.47, year: 2020, n: 63 },
+  { country: "AU", party: "工黨", equality: 5.38, liberty: 6.32, democracy: 7.02, individual: 6.51, year: 2018, n: 557 },
+  { country: "GE", party: "自民黨", equality: 5.37, liberty: 7.4, democracy: 8.04, individual: 6.56, year: 2018, n: 98 },
+  { country: "GB", party: "自民黨", equality: 5.35, liberty: 7.5, democracy: 7.6, individual: 7.2, year: 2022, n: 229 },
+  { country: "US", party: "民主黨", equality: 5.35, liberty: 6.61, democracy: 7.15, individual: 5.88, year: 2017, n: 1125 },
+  { country: "TW", party: "民進黨", equality: 5.31, liberty: 5.44, democracy: 6.67, individual: 4.01, year: 2019, n: 251 },
+  { country: "HK", party: "民主黨", equality: 5.25, liberty: 5.95, democracy: 7.34, individual: 4.36, year: 2020, n: 316 },
+  { country: "TW", party: "國民黨", equality: 5.25, liberty: 5.28, democracy: 6.67, individual: 3.7, year: 2019, n: 320 },
+  { country: "JP", party: "自民黨", equality: 5.21, liberty: 6.07, democracy: 7.43, individual: 4.51, year: 2019, n: 429 },
+  { country: "MY", party: "國民陣線", equality: 5.21, liberty: 4.55, democracy: 5.34, individual: 3.57, year: 2018, n: 528 },
+  { country: "HK", party: "民建聯", equality: 5.17, liberty: 5.4, democracy: 6.57, individual: 4.04, year: 2020, n: 365 },
+  { country: "HK", party: "公民黨", equality: 5.16, liberty: 6.4, democracy: 7.66, individual: 4.93, year: 2020, n: 201 },
+  { country: "TW", party: "時代力量", equality: 5.15, liberty: 6.5, democracy: 7.47, individual: 5.34, year: 2019, n: 51 },
+  { country: "MY", party: "和諧陣線", equality: 5.0, liberty: 4.43, democracy: 5.27, individual: 3.39, year: 2018, n: 155 },
+  { country: "MY", party: "希望聯盟", equality: 4.93, liberty: 4.79, democracy: 5.58, individual: 3.8, year: 2018, n: 523 },
+  { country: "CA", party: "保守黨", equality: 4.57, liberty: 6.69, democracy: 7.3, individual: 5.87, year: 2020, n: 870 },
+  { country: "GB", party: "保守黨", equality: 4.53, liberty: 6.68, democracy: 6.89, individual: 6.27, year: 2022, n: 552 },
+  { country: "AU", party: "自由黨", equality: 4.4, liberty: 5.81, democracy: 6.73, individual: 6.26, year: 2018, n: 651 },
+  { country: "US", party: "自由意志黨", equality: 4.28, liberty: 6.34, democracy: 6.93, individual: 5.55, year: 2017, n: 159 },
+  { country: "US", party: "共和黨", equality: 3.75, liberty: 5.6, democracy: 6.59, individual: 4.42, year: 2017, n: 829 },
+];
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// ============================================================
+// 國家層級參考點(佔位測試資料:目前用各國政黨的樣本數加權平均計算,
+// 之後有真實的國家調查數字,直接把對應國家那行換掉即可)
+// ============================================================
+export const COUNTRIES = [
+  { country: "AU", equality: 4.99, liberty: 6.2, democracy: 6.98, individual: 6.59, n: 1444 },
+  { country: "CA", equality: 5.47, liberty: 7.07, democracy: 7.43, individual: 6.51, n: 2768 },
+  { country: "GB", equality: 5.48, liberty: 7.19, democracy: 7.34, individual: 6.84, n: 1836 },
+  { country: "GE", equality: 5.83, liberty: 7.37, democracy: 8.15, individual: 6.39, n: 1097 },
+  { country: "HK", equality: 5.21, liberty: 5.88, democracy: 7.13, individual: 4.43, n: 945 },
+  { country: "JP", equality: 5.41, liberty: 6.2, democracy: 7.62, individual: 4.58, n: 599 },
+  { country: "KR", equality: 5.75, liberty: 5.33, democracy: 6.83, individual: 3.62, n: 716 },
+  { country: "MY", equality: 5.06, liberty: 4.64, democracy: 5.44, individual: 3.65, n: 1206 },
+  { country: "RU", equality: 6.1, liberty: 5.24, democracy: 6.2, individual: 4.07, n: 1185 },
+  { country: "TW", equality: 5.27, liberty: 5.44, democracy: 6.74, individual: 3.96, n: 622 },
+  { country: "US", equality: 4.67, liberty: 6.21, democracy: 6.92, individual: 5.31, n: 2170 },
+];
 
-// ---------------------------------------------------------------
-// State
-// ---------------------------------------------------------------
-let currentIndex = 0;
-const answers = {};
-let scores = null;
-let historyResults = []; // fetched from supabase
-let chartMode = { eqli: "mine", indem: "mine" }; // "mine" | "all"
 
-// ---------------------------------------------------------------
-// Screens
-// ---------------------------------------------------------------
-const screens = {
-  intro: document.getElementById("screen-intro"),
-  quiz: document.getElementById("screen-quiz"),
-  result: document.getElementById("screen-result"),
+// ============================================================
+// 題目與計分邏輯
+// ------------------------------------------------------------
+// 4 個維度: equality(平等) / democracy(民主) / individual(個人) / liberty(自由,由 democracy+individual 平均得出,不直接出題)
+// scale: "pair10"(1-10 兩極敘述) | "importance10"(1-10 重要性) | "agree4"(1-4 同意度,換算後反向) | "justify10"(1-10 正當性)
+// reverse: true 表示原始題義方向與維度分數方向相反,計分時需做 11-x
+// ============================================================
+
+export const QUESTIONS = [
+  // ---- 組一:平等(1-10, 兩極敘述, 5題) ----
+  { id: "e1", group: 1, scale: "pair10", dimension: "equality", reverse: false,
+    left: "收入差距應擴大以鼓勵個人努力", right: "收入應盡可能平等" },
+  { id: "e2", group: 1, scale: "pair10", dimension: "equality", reverse: false,
+    left: "個人應該承擔更多責任來養活自己", right: "國家應該承擔更多責任來照顧每個人的生活" },
+  { id: "e3", group: 1, scale: "pair10", dimension: "equality", reverse: false,
+    left: "私營企業應擴大", right: "公營企業應擴大" },
+  { id: "e4", group: 1, scale: "pair10", dimension: "equality", reverse: false,
+    left: "競爭是好的", right: "競爭是有害的" },
+  { id: "e5", group: 1, scale: "pair10", dimension: "equality", reverse: false,
+    left: "長期而言，努力工作通常會帶來較好的生活", right: "努力工作通常不會帶來成功，更重要的是運氣和人際關係" },
+
+  // ---- 組二:重要性(1-10, 8題) ----
+  { id: "i1", group: 2, scale: "importance10", dimension: "equality", reverse: false,
+    text: "政府向富人課稅並補助窮人" },
+  { id: "i2", group: 2, scale: "importance10", dimension: "equality", reverse: false,
+    text: "失業的人受到政府的補助" },
+  { id: "i3", group: 2, scale: "importance10", dimension: "equality", reverse: false,
+    text: "政府使民眾的收入平等" },
+  { id: "i4", group: 2, scale: "importance10", dimension: "democracy", reverse: false,
+    text: "人民自由地選舉領導者" },
+  { id: "i5", group: 2, scale: "importance10", dimension: "democracy", reverse: true,
+    text: "人民服從他們的統治者" },
+  { id: "i6", group: 2, scale: "importance10", dimension: "democracy", reverse: false,
+    text: "有公民權保護人民免於政府的壓迫" },
+  { id: "i7", group: 2, scale: "importance10", dimension: "democracy", reverse: true,
+    text: "政府無能時由軍隊接管" },
+  { id: "i8", group: 2, scale: "importance10", dimension: "democracy", reverse: false,
+    text: "施行民主體制" },
+
+  // ---- 組三:同意度(1-4制, 5題, 全數反向) ----
+  { id: "a1", group: 3, scale: "agree4", dimension: "democracy", reverse: true,
+    text: "擁有一個不會受到立法院與選舉所干擾、強而有力的領導者" },
+  { id: "a2", group: 3, scale: "agree4", dimension: "democracy", reverse: true,
+    text: "施行軍事統治" },
+  { id: "a3", group: 3, scale: "agree4", dimension: "democracy", reverse: true,
+    text: "政府有權在公共場所裝監視器監視人" },
+  { id: "a4", group: 3, scale: "agree4", dimension: "democracy", reverse: true,
+    text: "政府有權監控網路上所有的電子郵件和訊息" },
+  { id: "a5", group: 3, scale: "agree4", dimension: "democracy", reverse: true,
+    text: "政府有權未經告知蒐集任何民眾的資訊" },
+
+  // ---- 組四:正當性(1-10, 8題, 個人維度) ----
+  { id: "j1", group: 4, scale: "justify10", dimension: "individual", reverse: false, text: "同性戀" },
+  { id: "j2", group: 4, scale: "justify10", dimension: "individual", reverse: false, text: "墮胎" },
+  { id: "j3", group: 4, scale: "justify10", dimension: "individual", reverse: false, text: "性交易" },
+  { id: "j4", group: 4, scale: "justify10", dimension: "individual", reverse: false, text: "離婚" },
+  { id: "j5", group: 4, scale: "justify10", dimension: "individual", reverse: false, text: "婚前性行為" },
+  { id: "j6", group: 4, scale: "justify10", dimension: "individual", reverse: false, text: "性關係開放" },
+  { id: "j7", group: 4, scale: "justify10", dimension: "individual", reverse: false, text: "自殺" },
+  { id: "j8", group: 4, scale: "justify10", dimension: "individual", reverse: false, text: "安樂死" },
+];
+
+// 1-4 制轉 1-10 制: 1→1, 2→4, 3→7, 4→10
+function agree4to10(x) {
+  return 1 + (x - 1) * 3;
+}
+
+// 根據 dimension/scale/reverse,把單題原始答案轉成 1-10 的「維度分數」
+function toDimensionValue(question, rawValue) {
+  let v = rawValue;
+  if (question.scale === "agree4") {
+    v = agree4to10(v);
+  }
+  if (question.reverse) {
+    v = 11 - v;
+  }
+  return v;
+}
+
+// answers: { [questionId]: rawValue }
+export function computeScores(answers) {
+  const buckets = { equality: [], democracy: [], individual: [] };
+  for (const q of QUESTIONS) {
+    const raw = answers[q.id];
+    if (raw === undefined || raw === null) continue;
+    const v = toDimensionValue(q, raw);
+    buckets[q.dimension].push(v);
+  }
+  const avg = (arr) => (arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null);
+
+  const equality = avg(buckets.equality);
+  const democracy = avg(buckets.democracy);
+  const individual = avg(buckets.individual);
+  const liberty = democracy !== null && individual !== null ? (democracy + individual) / 2 : null;
+
+  return {
+    equality: equality !== null ? Math.round(equality * 100) / 100 : null,
+    democracy: democracy !== null ? Math.round(democracy * 100) / 100 : null,
+    individual: individual !== null ? Math.round(individual * 100) / 100 : null,
+    liberty: liberty !== null ? Math.round(liberty * 100) / 100 : null,
+  };
+}
+
+// ============================================================
+// 國家代碼 → 中文
+// ============================================================
+export const COUNTRY_NAME_ZH = {
+  TW: "台灣", GE: "德國", RU: "俄羅斯", JP: "日本", GB: "英國",
+  CA: "加拿大", US: "美國", HK: "香港", AU: "澳洲", KR: "韓國", MY: "馬來西亞",
 };
-function showScreen(name) {
-  for (const key in screens) screens[key].classList.toggle("hidden", key !== name);
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
 
-document.getElementById("start-btn").addEventListener("click", () => {
-  currentIndex = 0;
-  showScreen("quiz");
-  renderQuestion();
-});
-
-document.getElementById("restart-btn").addEventListener("click", () => {
-  for (const k in answers) delete answers[k];
-  currentIndex = 0;
-  scores = null;
-  showScreen("intro");
-});
-
-// ---------------------------------------------------------------
-// Quiz rendering
-// ---------------------------------------------------------------
-const quizRoot = document.getElementById("quiz-root");
-const progressFill = document.getElementById("progress-fill");
-const progressLabel = document.getElementById("progress-label");
-
-const GROUP_STEM = {
-  1: "你比較支持以下的哪個敘述？",
-  2: "你認為以下政策或制度有多重要？",
-  3: "你有多同意以下政策或制度？",
-  4: "你認為以下敘述是完全不正當、還是總是正當的？",
-};
-
-function renderQuestion() {
-  const q = QUESTIONS[currentIndex];
-  progressLabel.textContent = `Q${String(currentIndex + 1).padStart(2, "0")} / ${QUESTIONS.length}`;
-  progressFill.style.width = `${(currentIndex / QUESTIONS.length) * 100}%`;
-
-  const stem = GROUP_STEM[q.group];
-  let bodyHtml = "";
-
-  if (q.scale === "pair10") {
-    bodyHtml = `
-      <p class="q-text">${stem}</p>
-      <div class="pair-labels"><span>${q.left}</span><span>${q.right}</span></div>
-      <div class="scale-row" role="group" aria-label="1到10選擇">
-        ${Array.from({ length: 10 }, (_, i) => i + 1)
-          .map((n) => scaleBtn(q.id, n, answers[q.id]))
-          .join("")}
-      </div>
-      <div class="scale-endlabels"><span>1</span><span>10</span></div>
-    `;
-  } else if (q.scale === "importance10") {
-    bodyHtml = `
-      <p class="q-text">${stem}</p>
-      <p class="q-item">${q.text}</p>
-      <div class="scale-row" role="group" aria-label="1到10重要程度">
-        ${Array.from({ length: 10 }, (_, i) => i + 1)
-          .map((n) => scaleBtn(q.id, n, answers[q.id]))
-          .join("")}
-      </div>
-      <div class="scale-endlabels"><span>完全不重要</span><span>非常重要</span></div>
-    `;
-  } else if (q.scale === "justify10") {
-    bodyHtml = `
-      <p class="q-text">${stem}</p>
-      <p class="q-item">${q.text}</p>
-      <div class="scale-row" role="group" aria-label="1到10正當程度">
-        ${Array.from({ length: 10 }, (_, i) => i + 1)
-          .map((n) => scaleBtn(q.id, n, answers[q.id]))
-          .join("")}
-      </div>
-      <div class="scale-endlabels"><span>從不正當</span><span>總是正當</span></div>
-    `;
-  } else if (q.scale === "agree4") {
-    bodyHtml = `
-      <p class="q-text">${stem}</p>
-      <p class="q-item">${q.text}</p>
-      <div class="scale-row of4" role="group" aria-label="1到4同意程度">
-        ${[1, 2, 3, 4].map((n) => scaleBtn(q.id, n, answers[q.id])).join("")}
-      </div>
-      <div class="scale-endlabels"><span>非常不同意</span><span>非常同意</span></div>
-    `;
-  }
-
-  quizRoot.innerHTML = `
-    <div class="q-card">
-      ${bodyHtml}
-    </div>
-    <div class="nav-row">
-      <button class="btn secondary" id="prev-btn" ${currentIndex === 0 ? "disabled" : ""}>← 上一題</button>
-      <span class="nav-hint">${answers[q.id] !== undefined ? "已作答" : "請選擇一個答案"}</span>
-      <button class="btn" id="next-btn" ${answers[q.id] === undefined ? "disabled" : ""}>
-        ${currentIndex === QUESTIONS.length - 1 ? "完成測驗 →" : "下一題 →"}
-      </button>
-    </div>
-  `;
-
-  quizRoot.querySelectorAll("[data-qid]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const qid = btn.getAttribute("data-qid");
-      const val = Number(btn.getAttribute("data-val"));
-      answers[qid] = val;
-      renderQuestion();
-      // auto-advance shortly after any answer selection
-      setTimeout(() => goNext(), 180);
-    });
-  });
-
-  const prevBtn = document.getElementById("prev-btn");
-  const nextBtn = document.getElementById("next-btn");
-  if (prevBtn) prevBtn.addEventListener("click", goPrev);
-  if (nextBtn) nextBtn.addEventListener("click", goNext);
-}
-
-function scaleBtn(qid, n, selectedVal) {
-  const sel = selectedVal === n ? "selected" : "";
-  return `<button class="scale-btn ${sel}" data-qid="${qid}" data-val="${n}">${n}</button>`;
-}
-
-function goPrev() {
-  if (currentIndex > 0) {
-    currentIndex -= 1;
-    renderQuestion();
-  }
-}
-function goNext() {
-  if (answers[QUESTIONS[currentIndex].id] === undefined) return;
-  if (currentIndex < QUESTIONS.length - 1) {
-    currentIndex += 1;
-    renderQuestion();
-  } else {
-    finishQuiz();
-  }
-}
-
-// ---------------------------------------------------------------
-// Finish → compute scores → show results
-// ---------------------------------------------------------------
-async function finishQuiz() {
-  scores = computeScores(answers);
-  showScreen("result");
-  renderIdeologyPanel();
-  await refreshHistoryAndDraw();
-}
-
-// value 假設落在 1-10 尺度上,轉成 0-100 的百分比位置
-function toPercent(value) {
-  const p = ((value - 1) / 9) * 100;
-  return Math.max(0, Math.min(100, p));
-}
-
-function bigBarHTML({ axisName, leftLabel, rightLabel, percent, tier, valueDisplay, explanationPlaceholder }) {
-  return `
-    <div class="ibar-row">
-      <div class="ibar-tier">${axisName}：${tier}<span class="ibar-tier-value">(${valueDisplay})</span></div>
-      <div class="ibar-track big">
-        <div class="ibar-fill-left" style="width:${percent}%"></div>
-        <div class="ibar-fill-right" style="width:${100 - percent}%"></div>
-        <div class="ibar-marker" style="left:${percent}%"></div>
-      </div>
-      <div class="ibar-endlabels"><span>${leftLabel}</span><span>${rightLabel}</span></div>
-      <p class="ibar-explanation placeholder">${explanationPlaceholder}</p>
-    </div>
-  `;
-}
-
-function smallBarHTML({ label, percent, valueDisplay, tier, leftLabel, rightLabel, explanationPlaceholder }) {
-  return `
-    <div class="ibar-row small">
-      <div class="ibar-small-header"><span>${label}</span><strong>${tier}<span class="ibar-tier-value">(${valueDisplay})</span></strong></div>
-      <div class="ibar-track small">
-        <div class="ibar-fill-single" style="width:${percent}%"></div>
-      </div>
-      <div class="ibar-endlabels"><span>${leftLabel}</span><span>${rightLabel}</span></div>
-      <p class="ibar-explanation placeholder">${explanationPlaceholder}</p>
-    </div>
-  `;
-}
-
-function renderIdeologyPanel() {
-  const { party, distance } = findNearestParty(scores);
-  let matchSentence;
-  if (distance <= 1.5) {
-    const countryZh = COUNTRY_NAME_ZH[party.country] || party.country;
-    matchSentence = `你的意識形態和 <strong>${countryZh} ${party.party}</strong> 支持者最接近`;
-  } else {
-    matchSentence = "你的意識形態不接近以下任何政黨";
-  }
-
-  const econTier = economicLabel(scores.equality);
-  const polityTier = politicalSystemLabel(scores.liberty);
-
-  // 經濟軸:平等分數越高越「左」,所以左端點放高分那一側
-  const econPercent = 100 - toPercent(scores.equality);
-  // 社會軸:自由分數越高越靠「自由意志」端(放右側)
-  const polityPercent = toPercent(scores.liberty);
-
-  document.getElementById("ideology-panel").innerHTML = `
-    <p class="match-sentence">${matchSentence}</p>
-
-    ${bigBarHTML({
-      axisName: "經濟",
-      leftLabel: "平等", rightLabel: "市場",
-      percent: econPercent, tier: econTier, valueDisplay: scores.equality,
-      explanationPlaceholder: ECONOMIC_EXPLANATIONS[econTier] || "",
-    })}
-    ${bigBarHTML({
-      axisName: "社會",
-      leftLabel: "威權", rightLabel: "自由",
-      percent: polityPercent, tier: polityTier, valueDisplay: scores.liberty,
-      explanationPlaceholder: SOCIAL_EXPLANATION_FIXED,
-    })}
-
-    <div class="ibar-small-group">
-      ${smallBarHTML({
-        label: "政治體制", percent: toPercent(scores.democracy), valueDisplay: scores.democracy,
-        tier: democracyLabel(scores.democracy), leftLabel: "威權", rightLabel: "民主",
-        explanationPlaceholder: DEMOCRACY_EXPLANATIONS[democracyLabel(scores.democracy)] || "",
-      })}
-      ${smallBarHTML({
-        label: "個人選擇", percent: toPercent(scores.individual), valueDisplay: scores.individual,
-        tier: individualLabel(scores.individual), leftLabel: "傳統", rightLabel: "進步",
-        explanationPlaceholder: INDIVIDUAL_EXPLANATIONS[individualLabel(scores.individual)] || "",
-      })}
-    </div>
-
-    <div class="ibar-overall-note placeholder">
-      （這裡放不會隨結果改變的總體說明文字,例如整份測驗的計分邏輯或四個維度的關係,請自行填寫）
-    </div>
-  `;
-}
-
-// ---------------------------------------------------------------
-// Chart rendering (SVG, range 1-10, gridline every 1.0)
-// ---------------------------------------------------------------
-const CHART_SIZE = 680;
-const MARGIN = { top: 40, right: 46, bottom: 62, left: 70 };
-const PLOT = CHART_SIZE - MARGIN.left - MARGIN.right;
-const MIN_V = 1, MAX_V = 10;
-
-function scalePos(v) {
-  return ((v - MIN_V) / (MAX_V - MIN_V)) * PLOT;
-}
-
-function buildChartSVG({ xKey, yKey, xLabel, yLabel, poleLabels, myPoint, otherPoints, showAll }) {
-  const w = CHART_SIZE;
-  const h = CHART_SIZE;
-  const gx = (v) => MARGIN.left + scalePos(v);
-  const gy = (v) => h - MARGIN.bottom - scalePos(v);
-
-  let gridLines = "";
-  for (let v = MIN_V; v <= MAX_V; v++) {
-    const x = gx(v);
-    const y = gy(v);
-    gridLines += `<line x1="${x}" y1="${MARGIN.top}" x2="${x}" y2="${h - MARGIN.bottom}" stroke="#D8D3CF" stroke-width="1"/>`;
-    gridLines += `<line x1="${MARGIN.left}" y1="${y}" x2="${w - MARGIN.right}" y2="${y}" stroke="#D8D3CF" stroke-width="1"/>`;
-    gridLines += `<text x="${x}" y="${h - MARGIN.bottom + 18}" font-size="11" text-anchor="middle">${v}</text>`;
-    gridLines += `<text x="${MARGIN.left - 10}" y="${y + 4}" font-size="11" text-anchor="end">${v}</text>`;
-  }
-  // 中線:1-10 尺度的中點是 5.5
-  const cx = gx(5.5), cy = gy(5.5);
-  gridLines += `<line x1="${cx}" y1="${MARGIN.top}" x2="${cx}" y2="${h - MARGIN.bottom}" stroke="#B9B2AA" stroke-width="1" stroke-dasharray="4 4"/>`;
-  gridLines += `<line x1="${MARGIN.left}" y1="${cy}" x2="${w - MARGIN.right}" y2="${cy}" stroke="#B9B2AA" stroke-width="1" stroke-dasharray="4 4"/>`;
-
-  let partyDots = "";
+// ============================================================
+// 找出座標最接近的政黨(只看「平等 x 自由」兩維歐氏距離)
+// ============================================================
+export function findNearestParty(scores) {
+  const dims = ["equality", "liberty"];
+  let best = null;
+  let bestDist = Infinity;
   for (const p of PARTIES) {
-    const x = gx(p[xKey]);
-    const y = gy(p[yKey]);
-    const countryZh = COUNTRY_NAME_ZH[p.country] || p.country;
-    const meta = PARTY_META[`${p.country}_${p.party}`];
-    const title = meta ? `${countryZh} ${p.party} (${meta.year})` : `${countryZh} ${p.party}`;
-    const nAttr = meta ? ` data-n="${meta.n}"` : "";
-    partyDots += `<circle class="party-dot dot-click" cx="${x}" cy="${y}" r="4"
-      data-title="${title}"${nAttr} data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${p[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${p[yKey]}"></circle>`;
-  }
-
-  let otherDots = "";
-  if (showAll && otherPoints && otherPoints.length) {
-    for (const r of otherPoints) {
-      const x = gx(r[xKey]);
-      const y = gy(r[yKey]);
-      const label = r.nickname || "匿名";
-      otherDots += `<circle class="dot-click" cx="${x}" cy="${y}" r="4" fill="#3B5BA5" opacity="0.55"
-        data-title="${label}" data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${r[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${r[yKey]}"></circle>`;
+    let sumSq = 0;
+    for (const d of dims) {
+      const diff = scores[d] - p[d];
+      sumSq += diff * diff;
+    }
+    const dist = Math.sqrt(sumSq);
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = p;
     }
   }
-
-  let meMark = "";
-  if (myPoint) {
-    const x = gx(myPoint[xKey]);
-    const y = gy(myPoint[yKey]);
-    meMark = `
-      <line class="me-cross" x1="${x - 10}" y1="${y}" x2="${x + 10}" y2="${y}"/>
-      <line class="me-cross" x1="${x}" y1="${y - 10}" x2="${x}" y2="${y + 10}"/>
-      <circle class="me-dot dot-click" cx="${x}" cy="${y}" r="7"
-        data-title="你" data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${myPoint[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${myPoint[yKey]}"></circle>
-    `;
-  }
-
-  let poleText = "";
-  if (poleLabels) {
-    const { left, right, top, bottom } = poleLabels;
-    const midX = MARGIN.left + PLOT / 2;
-    const midY = MARGIN.top + PLOT / 2;
-    poleText += `<text class="pole-label" x="${midX}" y="${MARGIN.top - 14}" text-anchor="middle">${top}</text>`;
-    poleText += `<text class="pole-label" x="${midX}" y="${h - 12}" text-anchor="middle">${bottom}</text>`;
-    poleText += `<text class="pole-label" x="${14}" y="${midY}" text-anchor="start">${left}</text>`;
-    poleText += `<text class="pole-label" x="${w - 14}" y="${midY}" text-anchor="end">${right}</text>`;
-  }
-
-  return `
-    <svg class="chart" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
-      ${gridLines}
-      ${poleText}
-      ${partyDots}
-      ${otherDots}
-      ${meMark}
-    </svg>
-  `;
+  return { party: best, distance: Math.round(bestDist * 100) / 100 };
 }
 
-function drawCharts() {
-  hidePopover();
-  const eqliShowAll = chartMode.eqli === "all";
-  const indemShowAll = chartMode.indem === "all";
-
-  document.getElementById("chart-eqli").innerHTML = buildChartSVG({
-    xKey: "equality", yKey: "liberty", xLabel: "經濟", yLabel: "社會",
-    poleLabels: { left: "市場", right: "平等", top: "自由", bottom: "威權" },
-    myPoint: scores, otherPoints: historyResults, showAll: eqliShowAll,
-  });
-  document.getElementById("chart-indem").innerHTML = buildChartSVG({
-    xKey: "individual", yKey: "democracy", xLabel: "個人選擇", yLabel: "政治體制",
-    poleLabels: { left: "傳統", right: "進步", top: "民主", bottom: "威權" },
-    myPoint: scores, otherPoints: historyResults, showAll: indemShowAll,
-  });
+// ============================================================
+// 分數 → 光譜評語
+// ============================================================
+export function economicLabel(v) {
+  if (v <= 3.0) return "極右";
+  if (v <= 4.0) return "右翼";
+  if (v <= 5.0) return "中間偏右";
+  if (v <= 5.9) return "中間";
+  if (v <= 6.9) return "中間偏左";
+  if (v <= 7.9) return "左翼";
+  return "極左";
 }
 
-// ---------------------------------------------------------------
-// Click-to-open popover for chart dots (speech-bubble style)
-// ---------------------------------------------------------------
-const popover = document.getElementById("dot-popover");
-const popoverTitle = popover.querySelector(".dot-popover-title");
-const popoverBody = popover.querySelector(".dot-popover-body");
-
-function showDotPopover(targetEl) {
-  const title = targetEl.getAttribute("data-title");
-  const n = targetEl.getAttribute("data-n");
-  const xDim = targetEl.getAttribute("data-xdim");
-  const xLabel = targetEl.getAttribute("data-xlabel");
-  const xVal = targetEl.getAttribute("data-xval");
-  const yDim = targetEl.getAttribute("data-ydim");
-  const yLabel = targetEl.getAttribute("data-ylabel");
-  const yVal = targetEl.getAttribute("data-yval");
-
-  const xTier = getTierLabel(xDim, Number(xVal));
-  const yTier = getTierLabel(yDim, Number(yVal));
-
-  popoverTitle.textContent = title;
-  const nRow = n ? `<div class="dot-popover-n">N=${n}</div>` : "";
-  popoverBody.innerHTML = `
-    ${nRow}
-    <div class="dot-popover-row"><span>${xLabel}</span><strong>${xVal}<span class="dot-popover-tier">(${xTier})</span></strong></div>
-    <div class="dot-popover-row"><span>${yLabel}</span><strong>${yVal}<span class="dot-popover-tier">(${yTier})</span></strong></div>
-  `;
-  positionPopover(targetEl);
+// 「政治體制」(自由分數,即民主+個人平均),區間結構與經濟軸相同
+export function politicalSystemLabel(v) {
+  if (v <= 3.0) return "極權";
+  if (v <= 4.0) return "威權";
+  if (v <= 5.0) return "偏向威權";
+  if (v <= 5.9) return "中間";
+  if (v <= 6.9) return "偏向自由";
+  if (v <= 7.9) return "自由";
+  return "自由意志";
 }
 
-function showInfoPopover(targetEl) {
-  const title = targetEl.getAttribute("data-info-title");
-  const body = targetEl.getAttribute("data-info-body");
-  popoverTitle.textContent = title;
-  popoverBody.innerHTML = `<p class="dot-popover-text">${body}</p>`;
-  positionPopover(targetEl);
+// 「政治自由」(民主分數)
+export function democracyLabel(v) {
+  if (v <= 3.0) return "極權";
+  if (v <= 5.0) return "威權";
+  if (v <= 6.4) return "混合";
+  if (v <= 7.9) return "有限民主";
+  return "完全民主";
 }
 
-function positionPopover(targetEl) {
-  popover.classList.remove("hidden");
-  // measure after making visible (but keep 0 opacity handled by CSS class if needed)
-  const rect = targetEl.getBoundingClientRect();
-  const pw = popover.offsetWidth;
-  const ph = popover.offsetHeight;
-  let left = rect.left + rect.width / 2 - pw / 2;
-  let top = rect.top - ph - 12;
-  let arrowSide = "bottom"; // triangle points down toward the dot by default
-
-  // clamp horizontally within viewport
-  const margin = 8;
-  if (left < margin) left = margin;
-  if (left + pw > window.innerWidth - margin) left = window.innerWidth - margin - pw;
-
-  // if not enough room above, place below the dot instead
-  if (top < margin) {
-    top = rect.bottom + 12;
-    arrowSide = "top";
-  }
-
-  popover.style.left = `${left}px`;
-  popover.style.top = `${top}px`;
-
-  // position the arrow to point at the target's actual x position
-  const arrowLeft = rect.left + rect.width / 2 - left;
-  popover.style.setProperty("--arrow-left", `${arrowLeft}px`);
-  popover.classList.toggle("arrow-top", arrowSide === "top");
-  popover.classList.toggle("arrow-bottom", arrowSide === "bottom");
+// 「個人選擇」(個人分數)
+export function individualLabel(v) {
+  if (v <= 3.0) return "反動";
+  if (v <= 4.5) return "傳統";
+  if (v <= 5.9) return "中立";
+  if (v <= 7.9) return "進步";
+  return "基進";
 }
 
-function hidePopover() {
-  popover.classList.add("hidden");
-}
-
-document.addEventListener("click", (e) => {
-  const dot = e.target.closest(".dot-click");
-  const infoBtn = e.target.closest(".info-btn");
-  if (dot) {
-    showDotPopover(dot);
-  } else if (infoBtn) {
-    showInfoPopover(infoBtn);
-  } else if (!e.target.closest("#dot-popover")) {
-    hidePopover();
-  }
-});
-window.addEventListener("resize", hidePopover);
-window.addEventListener("scroll", hidePopover, true);
-
-async function refreshHistoryAndDraw() {
-  drawCharts(); // draw immediately with "mine" mode, don't block on network
-  try {
-    const { data, error } = await supabase
-      .from("quiz_results")
-      .select("equality,liberty,democracy,individual,nickname")
-      .order("created_at", { ascending: false })
-      .limit(500);
-    if (!error && data) {
-      historyResults = data;
-      drawCharts();
-    }
-  } catch (e) {
-    // silently ignore — charts still work in "mine" mode
-    console.warn("無法讀取歷史結果", e);
+// 依維度名稱(equality/liberty/democracy/individual)取得對應評語
+export function getTierLabel(dimension, v) {
+  switch (dimension) {
+    case "equality": return economicLabel(v);
+    case "liberty": return politicalSystemLabel(v);
+    case "democracy": return democracyLabel(v);
+    case "individual": return individualLabel(v);
+    default: return "";
   }
 }
 
-document.querySelectorAll(".toggle-group[data-chart]").forEach((group) => {
-  group.querySelectorAll("button").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const chart = group.getAttribute("data-chart");
-      const mode = btn.getAttribute("data-mode");
-      chartMode[chart] = mode;
-      group.querySelectorAll("button").forEach((b) => b.classList.toggle("active", b === btn));
-      drawCharts();
-    });
-  });
-});
+// ============================================================
+// 各評語段落的說明文字(佔位文字,請自行逐條填寫)
+// 「社會」軸不隨結果變化,只有一段固定文字,不放在這個對照表裡
+// ============================================================
+export const ECONOMIC_EXPLANATIONS = {
+  "極左": "（請在此填寫「極左」的說明文字）",
+  "左翼": "（請在此填寫「左翼」的說明文字）",
+  "中間偏左": "（請在此填寫「中間偏左」的說明文字）",
+  "中間": "（請在此填寫「中間」的說明文字）",
+  "中間偏右": "（請在此填寫「中間偏右」的說明文字）",
+  "右翼": "（請在此填寫「右翼」的說明文字）",
+  "極右": "（請在此填寫「極右」的說明文字）",
+};
 
-// ---------------------------------------------------------------
-// Save to Supabase
-// ---------------------------------------------------------------
-const saveBtn = document.getElementById("save-btn");
-const statusMsg = document.getElementById("save-status");
-const nicknameInput = document.getElementById("nickname-input");
+export const DEMOCRACY_EXPLANATIONS = {
+  "極權": "（請在此填寫「極權」的說明文字）",
+  "威權": "（請在此填寫「威權」的說明文字）",
+  "混合": "（請在此填寫「混合」的說明文字）",
+  "有限民主": "（請在此填寫「有限民主」的說明文字）",
+  "完全民主": "（請在此填寫「完全民主」的說明文字）",
+};
 
-saveBtn.addEventListener("click", async () => {
-  saveBtn.disabled = true;
-  statusMsg.textContent = "儲存中…";
-  statusMsg.className = "status-msg";
-  try {
-    const nickname = nicknameInput.value.trim() || null;
-    const { data, error } = await supabase
-      .from("quiz_results")
-      .insert([{ ...scores, nickname }])
-      .select()
-      .single();
-    if (error) throw error;
+export const INDIVIDUAL_EXPLANATIONS = {
+  "反動": "（請在此填寫「反動」的說明文字）",
+  "傳統": "（請在此填寫「傳統」的說明文字）",
+  "中立": "（請在此填寫「中立」的說明文字）",
+  "進步": "（請在此填寫「進步」的說明文字）",
+  "基進": "（請在此填寫「基進」的說明文字）",
+};
 
-    // best-effort: store raw answers privately (insert-only table)
-    try {
-      await supabase.from("quiz_answers_private").insert([{ result_id: data.id, answers }]);
-    } catch (e) {
-      console.warn("原始作答儲存失敗(不影響主要結果)", e);
-    }
+// 「社會」軸固定不變的說明文字(不隨結果改變)
+export const SOCIAL_EXPLANATION_FIXED = "（請自行填寫此軸固定不變的說明文字）";
 
-    statusMsg.textContent = "已儲存！感謝你的填答。";
-    statusMsg.className = "status-msg ok";
-    saveBtn.textContent = "已儲存";
-    await refreshHistoryAndDraw();
-  } catch (e) {
-    console.error(e);
-    statusMsg.textContent = "儲存失敗,請確認 config.js 是否已填入你的 Supabase 專案資訊。";
-    statusMsg.className = "status-msg err";
-    saveBtn.disabled = false;
-  }
-});
+// ============================================================
+// 各政黨調查年份與樣本數(N),key 為 "國家代碼_政黨名稱"
+// ============================================================
