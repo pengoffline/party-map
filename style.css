@@ -221,6 +221,28 @@ section:first-of-type .section-heading { margin-top: 0; }
   margin-top: 8px;
 }
 
+.q-note {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  margin: -12px 0 20px;
+}
+
+.choice-list { display: flex; flex-direction: column; gap: 8px; }
+.choice-btn {
+  text-align: left;
+  border: 1.5px solid var(--rule);
+  background: var(--paper);
+  padding: 12px 16px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 14.5px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+.choice-btn:hover { border-color: var(--ink); }
+.choice-btn.selected { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.choice-btn:focus-visible { outline: 3px solid var(--c-liberty); outline-offset: 2px; }
+
 .nav-row {
   display: flex;
   justify-content: space-between;
