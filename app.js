@@ -625,11 +625,19 @@ saveBtn.addEventListener("click", async () => {
       .single();
     if (error) throw error;
 
-    // best-effort: store raw answers privately (insert-only table),
-    // 人口統計題(不影響分析結果)也一併存在這裡,不進公開的 quiz_results
+    // best-effort: store raw answers privately (insert-only table)。
+    // 26 題計分題原始作答維持 JSON(answers 欄位),
+    // 4 題附加題(不影響分析結果)改成各自獨立欄位,方便直接篩選查詢
     try {
       await supabase.from("quiz_answers_private").insert([
-        { result_id: data.id, answers: { items: answers, demographics: demoAnswers } },
+        {
+          result_id: data.id,
+          answers,
+          self_lr: demoAnswers.self_lr ?? null,
+          residence: demoAnswers.residence ?? null,
+          party_support: demoAnswers.party_support ?? null,
+          age: demoAnswers.age ?? null,
+        },
       ]);
     } catch (e) {
       console.warn("原始作答儲存失敗(不影響主要結果)", e);
