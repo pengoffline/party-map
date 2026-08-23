@@ -180,10 +180,9 @@ function currentDemoSteps() {
 function renderDemoQuestion() {
   const steps = currentDemoSteps();
   const q = steps[demoIndex];
-  const totalSteps = QUESTIONS.length + steps.length;
-  const currentNum = QUESTIONS.length + demoIndex + 1;
-  progressLabel.textContent = `Q${String(currentNum).padStart(2, "0")} / ${totalSteps}`;
-  progressFill.style.width = `${((currentNum - 1) / totalSteps) * 100}%`;
+  // 這幾題不計入分析,進度條固定顯示為已完成,不再隨題數變動
+  progressLabel.textContent = `附加題 ${demoIndex + 1} / ${steps.length}（不影響分析結果）`;
+  progressFill.style.width = "100%";
 
   const stem = q.kind === "conditionalChoice" ? q.stemByValue[demoAnswers.residence] : q.stem;
   let bodyHtml = `<p class="q-text">${stem}</p><p class="q-note">${q.note}</p>`;
@@ -233,6 +232,7 @@ function renderDemoQuestion() {
         delete demoAnswers.party_support; // 居住地改變,先前選的政黨支持度選項可能不再適用
       }
       renderDemoQuestion();
+      setTimeout(() => goNextDemo(), 180);
     });
   });
   quizRoot.querySelectorAll("[data-qid]").forEach((btn) => {
