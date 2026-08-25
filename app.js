@@ -408,8 +408,9 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, poleLabels, myPoint, otherP
       const countryZh = COUNTRY_NAME_ZH[p.country] || p.country;
       const title = p.year ? `${countryZh} ${p.party} (${p.year})` : `${countryZh} ${p.party}`;
       const nAttr = p.n ? ` data-n="${p.n}"` : "";
-      partyDots += `<circle class="party-dot dot-click" cx="${x}" cy="${y}" r="4"
-        data-title="${title}"${nAttr} data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${p[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${p[yKey]}"></circle>`;
+      const dataAttrs = `data-title="${title}"${nAttr} data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${p[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${p[yKey]}"`;
+      partyDots += `<circle class="party-dot" cx="${x}" cy="${y}" r="4"></circle>
+        <circle class="dot-hitarea dot-click" cx="${x}" cy="${y}" r="11" fill="transparent" ${dataAttrs}></circle>`;
     }
   }
 
@@ -420,8 +421,9 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, poleLabels, myPoint, otherP
       const y = gy(c[yKey]);
       const countryZh = COUNTRY_NAME_ZH[c.country] || c.country;
       // 國家層級的點不顯示樣本數,只顯示國名跟數值
-      countryDots += `<circle class="country-dot dot-click" cx="${x}" cy="${y}" r="5"
-        data-title="${countryZh}" data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${c[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${c[yKey]}"></circle>`;
+      const dataAttrs = `data-title="${countryZh}" data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${c[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${c[yKey]}"`;
+      countryDots += `<circle class="country-dot" cx="${x}" cy="${y}" r="5"></circle>
+        <circle class="dot-hitarea dot-click" cx="${x}" cy="${y}" r="12" fill="transparent" ${dataAttrs}></circle>`;
     }
   }
 
@@ -431,8 +433,9 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, poleLabels, myPoint, otherP
       const x = gx(r[xKey]);
       const y = gy(r[yKey]);
       const label = r.nickname || "匿名";
-      otherDots += `<circle class="dot-click" cx="${x}" cy="${y}" r="4" fill="#3B5BA5" opacity="0.55"
-        data-title="${label}" data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${r[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${r[yKey]}"></circle>`;
+      const dataAttrs = `data-title="${label}" data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${r[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${r[yKey]}"`;
+      otherDots += `<circle class="other-dot" cx="${x}" cy="${y}" r="4" fill="#3B5BA5" opacity="0.55"></circle>
+        <circle class="dot-hitarea dot-click" cx="${x}" cy="${y}" r="11" fill="transparent" ${dataAttrs}></circle>`;
     }
   }
 
@@ -440,13 +443,15 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, poleLabels, myPoint, otherP
   if (myPoint) {
     const x = gx(myPoint[xKey]);
     const y = gy(myPoint[yKey]);
+    const dataAttrs = `data-title="你" data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${myPoint[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${myPoint[yKey]}"`;
     meMark = `
       <line class="me-cross" x1="${x - 10}" y1="${y}" x2="${x + 10}" y2="${y}"/>
       <line class="me-cross" x1="${x}" y1="${y - 10}" x2="${x}" y2="${y + 10}"/>
-      <circle class="me-dot dot-click" cx="${x}" cy="${y}" r="7"
-        data-title="你" data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${myPoint[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${myPoint[yKey]}"></circle>
+      <circle class="me-dot" cx="${x}" cy="${y}" r="7"></circle>
+      <circle class="dot-hitarea dot-click" cx="${x}" cy="${y}" r="14" fill="transparent" ${dataAttrs}></circle>
     `;
   }
+
 
   let poleText = "";
   if (poleLabels) {
@@ -561,6 +566,9 @@ function hidePopover() {
   popover.classList.add("hidden");
 }
 
+// 只有滑鼠裝置(有 hover 能力)才用「移過去顯示」,觸控裝置維持點擊開關
+const isHoverCapable = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
 document.addEventListener("click", (e) => {
   const dot = e.target.closest(".dot-click");
   const infoBtn = e.target.closest(".info-btn");
@@ -572,6 +580,33 @@ document.addEventListener("click", (e) => {
     hidePopover();
   }
 });
+
+if (isHoverCapable) {
+  document.addEventListener("mouseover", (e) => {
+    const dot = e.target.closest(".dot-hitarea");
+    if (dot) {
+      dot.previousElementSibling?.classList.add("dot-hovered");
+      showDotPopover(dot);
+      return;
+    }
+    const infoBtn = e.target.closest(".info-btn");
+    if (infoBtn) showInfoPopover(infoBtn);
+  });
+
+  document.addEventListener("mouseout", (e) => {
+    const dot = e.target.closest(".dot-hitarea");
+    const related = e.relatedTarget;
+    const movingIntoPopover = related && related.closest && related.closest("#dot-popover");
+    const movingIntoSameDot = related && related.closest && related.closest(".dot-hitarea") === dot;
+    if (dot && !movingIntoPopover && !movingIntoSameDot) {
+      dot.previousElementSibling?.classList.remove("dot-hovered");
+      hidePopover();
+    }
+    const infoBtn = e.target.closest(".info-btn");
+    if (infoBtn && !movingIntoPopover) hidePopover();
+  });
+}
+
 window.addEventListener("resize", hidePopover);
 window.addEventListener("scroll", hidePopover, true);
 
