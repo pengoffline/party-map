@@ -390,8 +390,10 @@ section:first-of-type .section-heading { margin-top: 0; }
   justify-content: center;
   padding: 0;
 }
-.info-btn:hover { border-color: var(--ink); color: var(--ink); }
 .info-btn:focus-visible { outline: 3px solid var(--c-liberty); outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) {
+  .info-btn:hover { border-color: var(--ink); color: var(--ink); }
+}
 .toggle-group {
   display: inline-flex;
   border: 1.5px solid var(--ink);
@@ -425,12 +427,18 @@ svg.chart {
   opacity: 0.8;
 }
 .chart .party-dot { fill: #9aa3ad; opacity: 0.55; }
-.chart .party-dot:hover { opacity: 1; }
 .chart .country-dot { fill: var(--c-democracy); opacity: 0.7; }
-.chart .country-dot:hover { opacity: 1; }
-.chart .dot-click { cursor: pointer; }
+.chart .other-dot { fill: #3B5BA5; opacity: 0.55; }
+.chart .dot-hitarea { cursor: pointer; }
 .chart .me-dot { fill: var(--c-democracy); stroke: var(--paper); stroke-width: 2; }
 .chart .me-cross { stroke: var(--ink); stroke-width: 1.4; }
+
+/* 只在滑鼠裝置上才顯示 hover 高亮,避免手機因為 :hover 規則導致第一下點擊被吃掉、要點兩下才有反應 */
+@media (hover: hover) and (pointer: fine) {
+  .chart .party-dot.dot-hovered { opacity: 1; }
+  .chart .country-dot.dot-hovered { opacity: 1; }
+  .chart .other-dot.dot-hovered { opacity: 1; }
+}
 
 .footer-actions {
   display: flex;
