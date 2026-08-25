@@ -278,6 +278,7 @@ async function finishQuiz() {
   scores = computeScores(answers);
   showScreen("result");
   renderIdeologyPanel();
+  await saveResult();
   await refreshHistoryAndDraw();
 }
 
@@ -432,8 +433,7 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, poleLabels, myPoint, otherP
     for (const r of otherPoints) {
       const x = gx(r[xKey]);
       const y = gy(r[yKey]);
-      const label = r.nickname || "匿名";
-      const dataAttrs = `data-title="${label}" data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${r[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${r[yKey]}"`;
+      const dataAttrs = `data-title="填答者" data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${r[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${r[yKey]}"`;
       otherDots += `<circle class="other-dot" cx="${x}" cy="${y}" r="4" fill="#3B5BA5" opacity="0.55"></circle>
         <circle class="dot-hitarea dot-click" cx="${x}" cy="${y}" r="11" fill="transparent" ${dataAttrs}></circle>`;
     }
@@ -615,7 +615,7 @@ async function refreshHistoryAndDraw() {
   try {
     const { data, error } = await supabase
       .from("quiz_results")
-      .select("equality,liberty,democracy,individual,nickname")
+      .select("equality,liberty,democracy,individual")
       .order("created_at", { ascending: false })
       .limit(500);
     if (!error && data) {
@@ -643,19 +643,15 @@ document.querySelectorAll(".toggle-group[data-chart]").forEach((group) => {
 // ---------------------------------------------------------------
 // Save to Supabase
 // ---------------------------------------------------------------
-const saveBtn = document.getElementById("save-btn");
 const statusMsg = document.getElementById("save-status");
-const nicknameInput = document.getElementById("nickname-input");
 
-saveBtn.addEventListener("click", async () => {
-  saveBtn.disabled = true;
+async function saveResult() {
   statusMsg.textContent = "儲存中…";
   statusMsg.className = "status-msg";
   try {
-    const nickname = nicknameInput.value.trim() || null;
     const { data, error } = await supabase
       .from("quiz_results")
-      .insert([{ ...scores, nickname }])
+      .insert([{ ...scores }])
       .select()
       .single();
     if (error) throw error;
@@ -678,14 +674,11 @@ saveBtn.addEventListener("click", async () => {
       console.warn("原始作答儲存失敗(不影響主要結果)", e);
     }
 
-    statusMsg.textContent = "已儲存！感謝你的填答。";
+    statusMsg.textContent = "已自動儲存,感謝你的填答。";
     statusMsg.className = "status-msg ok";
-    saveBtn.textContent = "已儲存";
-    await refreshHistoryAndDraw();
   } catch (e) {
     console.error(e);
     statusMsg.textContent = "儲存失敗,請確認 config.js 是否已填入你的 Supabase 專案資訊。";
     statusMsg.className = "status-msg err";
-    saveBtn.disabled = false;
   }
-});
+}
