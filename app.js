@@ -419,9 +419,9 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, poleLabels, myPoint, otherP
       const x = gx(c[xKey]);
       const y = gy(c[yKey]);
       const countryZh = COUNTRY_NAME_ZH[c.country] || c.country;
-      const nAttr = c.n ? ` data-n="${c.n}"` : "";
+      // 國家層級的點不顯示樣本數,只顯示國名跟數值
       countryDots += `<circle class="country-dot dot-click" cx="${x}" cy="${y}" r="5"
-        data-title="${countryZh}"${nAttr} data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${c[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${c[yKey]}"></circle>`;
+        data-title="${countryZh}" data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${c[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${c[yKey]}"></circle>`;
     }
   }
 
