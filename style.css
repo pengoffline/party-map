@@ -455,25 +455,6 @@ svg.chart {
 .status-msg.ok { color: var(--c-individual); }
 .status-msg.err { color: var(--c-democracy); }
 
-.nickname-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  margin: 20px 0;
-  flex-wrap: wrap;
-}
-.nickname-row input {
-  font-family: 'Noto Sans TC', sans-serif;
-  font-size: 14px;
-  padding: 10px 12px;
-  border: 1.5px solid var(--rule);
-  background: var(--paper);
-  color: var(--ink);
-  flex: 1;
-  min-width: 180px;
-}
-.nickname-row input:focus-visible { outline: 3px solid var(--c-liberty); outline-offset: 1px; }
-
 .hidden { display: none !important; }
 
 /* ---------- Dot click popover ---------- */
