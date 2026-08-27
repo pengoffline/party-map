@@ -420,7 +420,7 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, poleLabels, myPoint, otherP
       } else {
         // 觸控裝置:改用固定顯示的小字標籤(國碼 政黨名),避免縮放後彈出框定位跑掉
         partyDots += `<circle class="party-dot" cx="${x}" cy="${y}" r="4"></circle>
-          <text class="dot-label" x="${x + 6}" y="${y - 5}">${p.country} ${p.party}</text>`;
+          <text class="dot-label" x="${x + 4}" y="${y - 4}">${p.country} ${p.party}</text>`;
       }
     }
   }
@@ -439,7 +439,7 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, poleLabels, myPoint, otherP
       } else {
         // 觸控裝置:改用固定顯示的國家名稱標籤
         countryDots += `<circle class="country-dot" cx="${x}" cy="${y}" r="5"></circle>
-          <text class="dot-label dot-label-country" x="${x + 7}" y="${y - 6}">${countryZh}</text>`;
+          <text class="dot-label dot-label-country" x="${x + 5}" y="${y - 5}">${countryZh}</text>`;
       }
     }
   }
