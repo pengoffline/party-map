@@ -4,6 +4,10 @@ import { PARTIES, COUNTRIES, QUESTIONS, DEMOGRAPHIC_QUESTIONS, computeScores, CO
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// 是否為滑鼠裝置(有精準 hover 能力)。桌面用滑鼠移過去顯示說明框;
+// 觸控裝置(手機/平板)改用固定顯示的小字標籤,避免縮放後彈出框定位跑掉的問題
+const isHoverCapable = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
 // ---------------------------------------------------------------
 // State
 // ---------------------------------------------------------------
@@ -408,10 +412,16 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, poleLabels, myPoint, otherP
       const y = gy(p[yKey]);
       const countryZh = COUNTRY_NAME_ZH[p.country] || p.country;
       const title = p.year ? `${countryZh} ${p.party} (${p.year})` : `${countryZh} ${p.party}`;
-      const nAttr = p.n ? ` data-n="${p.n}"` : "";
-      const dataAttrs = `data-title="${title}"${nAttr} data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${p[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${p[yKey]}"`;
-      partyDots += `<circle class="party-dot" cx="${x}" cy="${y}" r="4"></circle>
-        <circle class="dot-hitarea dot-click" cx="${x}" cy="${y}" r="11" fill="transparent" ${dataAttrs}></circle>`;
+      if (isHoverCapable) {
+        const nAttr = p.n ? ` data-n="${p.n}"` : "";
+        const dataAttrs = `data-title="${title}"${nAttr} data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${p[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${p[yKey]}"`;
+        partyDots += `<circle class="party-dot" cx="${x}" cy="${y}" r="4"></circle>
+          <circle class="dot-hitarea dot-click" cx="${x}" cy="${y}" r="11" fill="transparent" ${dataAttrs}></circle>`;
+      } else {
+        // 觸控裝置:改用固定顯示的小字標籤(國碼 政黨名),避免縮放後彈出框定位跑掉
+        partyDots += `<circle class="party-dot" cx="${x}" cy="${y}" r="4"></circle>
+          <text class="dot-label" x="${x + 6}" y="${y - 5}">${p.country} ${p.party}</text>`;
+      }
     }
   }
 
@@ -421,10 +431,16 @@ function buildChartSVG({ xKey, yKey, xLabel, yLabel, poleLabels, myPoint, otherP
       const x = gx(c[xKey]);
       const y = gy(c[yKey]);
       const countryZh = COUNTRY_NAME_ZH[c.country] || c.country;
-      // 國家層級的點不顯示樣本數,只顯示國名跟數值
-      const dataAttrs = `data-title="${countryZh}" data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${c[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${c[yKey]}"`;
-      countryDots += `<circle class="country-dot" cx="${x}" cy="${y}" r="5"></circle>
-        <circle class="dot-hitarea dot-click" cx="${x}" cy="${y}" r="12" fill="transparent" ${dataAttrs}></circle>`;
+      if (isHoverCapable) {
+        // 國家層級的點不顯示樣本數,只顯示國名跟數值
+        const dataAttrs = `data-title="${countryZh}" data-xdim="${xKey}" data-xlabel="${xLabel}" data-xval="${c[xKey]}" data-ydim="${yKey}" data-ylabel="${yLabel}" data-yval="${c[yKey]}"`;
+        countryDots += `<circle class="country-dot" cx="${x}" cy="${y}" r="5"></circle>
+          <circle class="dot-hitarea dot-click" cx="${x}" cy="${y}" r="12" fill="transparent" ${dataAttrs}></circle>`;
+      } else {
+        // 觸控裝置:改用固定顯示的國家名稱標籤
+        countryDots += `<circle class="country-dot" cx="${x}" cy="${y}" r="5"></circle>
+          <text class="dot-label dot-label-country" x="${x + 7}" y="${y - 6}">${countryZh}</text>`;
+      }
     }
   }
 
@@ -565,9 +581,6 @@ function positionPopover(targetEl) {
 function hidePopover() {
   popover.classList.add("hidden");
 }
-
-// 只有滑鼠裝置(有 hover 能力)才用「移過去顯示」,觸控裝置維持點擊開關
-const isHoverCapable = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
 document.addEventListener("click", (e) => {
   const dot = e.target.closest(".dot-click");
