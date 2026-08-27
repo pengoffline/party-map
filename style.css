@@ -430,6 +430,17 @@ svg.chart {
 .chart .country-dot { fill: var(--c-democracy); opacity: 0.7; }
 .chart .other-dot { fill: #3B5BA5; opacity: 0.55; }
 .chart .dot-hitarea { cursor: pointer; }
+.chart .dot-label {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 9px;
+  fill: var(--ink-soft);
+  pointer-events: none;
+}
+.chart .dot-label-country {
+  font-size: 10px;
+  font-weight: 700;
+  fill: var(--c-democracy);
+}
 .chart .me-dot { fill: var(--c-democracy); stroke: var(--paper); stroke-width: 2; }
 .chart .me-cross { stroke: var(--ink); stroke-width: 1.4; }
 
