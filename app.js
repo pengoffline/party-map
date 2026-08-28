@@ -625,6 +625,7 @@ window.addEventListener("scroll", hidePopover, true);
 
 async function refreshHistoryAndDraw() {
   drawCharts(); // draw immediately with "mine" mode, don't block on network
+  renderPercentileText();
   try {
     const { data, error } = await supabase
       .from("quiz_results")
@@ -634,11 +635,41 @@ async function refreshHistoryAndDraw() {
     if (!error && data) {
       historyResults = data;
       drawCharts();
+      renderPercentileText();
     }
   } catch (e) {
     // silently ignore — charts still work in "mine" mode
     console.warn("無法讀取歷史結果", e);
   }
+}
+
+// 算「贏過多少填答者」的百分比:嚴格低於自己分數的人數 ÷ 總填答人數(含自己)
+function computePercentile(dim) {
+  if (!scores || !historyResults || historyResults.length === 0) return null;
+  const value = scores[dim];
+  const below = historyResults.filter((r) => r[dim] < value).length;
+  return Math.round((below / historyResults.length) * 100);
+}
+
+function renderPercentileText() {
+  const eqliEl = document.getElementById("chart-eqli-percentile");
+  const indemEl = document.getElementById("chart-indem-percentile");
+  if (!eqliEl || !indemEl) return;
+
+  const eq = computePercentile("equality");
+  const lib = computePercentile("liberty");
+  const dem = computePercentile("democracy");
+  const ind = computePercentile("individual");
+
+  eqliEl.innerHTML =
+    eq === null
+      ? ""
+      : `<p>你比目前這裡 ${eq}% 的填答者更偏向平等</p><p>你比目前這裡 ${lib}% 的填答者更偏向自由</p>`;
+
+  indemEl.innerHTML =
+    dem === null
+      ? ""
+      : `<p>你比目前這裡 ${dem}% 的填答者更重視民主體制</p><p>你比目前這裡 ${ind}% 的填答者更重視個人選擇</p>`;
 }
 
 document.querySelectorAll(".toggle-group[data-chart]").forEach((group) => {
