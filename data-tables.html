@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>完整資料表 — 政治價值測驗</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">DATA TABLES · 完整資料表</div>
+    <h1>政黨與國家總表</h1>
+    <p>點欄位標題可依該面向的分數升冪/降冪排序。分數旁的文字是依區間換算出的評語,跟座標圖上彈出框顯示的邏輯一致。</p>
+  </header>
+
+  <section>
+    <h2 class="section-heading">政黨總表</h2>
+    <div class="table-scroll">
+      <table class="data-table" id="party-table">
+        <thead>
+          <tr>
+            <th data-key="country" class="sortable">國家</th>
+            <th data-key="party" class="sortable">政黨</th>
+            <th data-key="year" class="sortable">年份</th>
+            <th data-key="n" class="sortable">樣本數</th>
+            <th data-key="equality" class="sortable">平等</th>
+            <th data-key="liberty" class="sortable">自由</th>
+            <th data-key="democracy" class="sortable">政治體制</th>
+            <th data-key="individual" class="sortable">個人選擇</th>
+          </tr>
+        </thead>
+        <tbody id="party-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-heading">國家總表</h2>
+    <div class="table-scroll">
+      <table class="data-table" id="country-table">
+        <thead>
+          <tr>
+            <th data-key="country" class="sortable">國家</th>
+            <th data-key="equality" class="sortable">平等</th>
+            <th data-key="liberty" class="sortable">自由</th>
+            <th data-key="democracy" class="sortable">政治體制</th>
+            <th data-key="individual" class="sortable">個人選擇</th>
+          </tr>
+        </thead>
+        <tbody id="country-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="footer-note">
+    分數評語區間跟座標圖、結果頁使用同一套換算邏輯(見 data.js)。國家總表不顯示樣本數。
+  </div>
+</div>
+
+<script type="module" src="data-tables.js"></script>
+</body>
+</html>
