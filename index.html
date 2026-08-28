@@ -1,106 +1,562 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>政治價值測驗 — 平等 · 自由 · 民主 · 個人</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<div class="wrap">
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap');
 
-  <header class="masthead">
-    <div class="eyebrow">POLITICAL VALUES SURVEY · 26 題</div>
-    <h1>你的政治座標</h1>
-    <p>回答 26 題,量測你在「平等」「自由」「民主」「個人」四個維度上的位置,並與各國政黨對照。</p>
-  </header>
+:root {
+  --paper: #EDEAE9;
+  --paper-line: #D8D3CF;
+  --ink: #1B2430;
+  --ink-soft: #5B6470;
+  --rule: #B9B2AA;
 
-  <!-- ============ INTRO ============ -->
-  <section id="screen-intro">
-    <div class="intro-card">
-      <p>這份測驗依據 World Values Survey 題組改編,總共 26 題,大約需要 5-8 分鐘完成。</p>
-      <ul>
-        <li><strong>平等</strong>:對收入分配、政府再分配角色的態度</li>
-        <li><strong>民主</strong>:對民主體制、政治權威、監控權力的態度</li>
-        <li><strong>個人</strong>:對個人生活自主、道德議題的開放程度</li>
-        <li><strong>自由</strong>:由「民主」與「個人」兩者平均而來,代表政治自由與文化自由的綜合</li>
-      </ul>
-      <p>作答完成後,你的結果會被畫在座標圖上,並可選擇儲存到資料庫、與其他填答者的結果疊圖比較。</p>
-      <button class="btn" id="start-btn">開始測驗 →</button>
-    </div>
-  </section>
+  --c-equality: #B4791F;   /* 琥珀 */
+  --c-liberty: #3B5BA5;    /* 靛藍 */
+  --c-democracy: #A63D40;  /* 磚紅 */
+  --c-individual: #3F6C51; /* 墨綠 */
 
-  <!-- ============ QUIZ ============ -->
-  <section id="screen-quiz" class="hidden">
-    <div class="progress-row">
-      <span id="progress-label">Q01 / 26</span>
-      <span>每題選一個最接近你想法的答案</span>
-    </div>
-    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
-    <div id="quiz-root"></div>
-  </section>
+  --card: #F5F3F0;
+  --focus: #1B2430;
+}
 
-  <!-- ============ RESULT ============ -->
-  <section id="screen-result" class="hidden">
-    <div class="ideology-panel" id="ideology-panel"></div>
+* { box-sizing: border-box; }
 
-    <div class="status-msg" id="save-status"></div>
+html { scroll-behavior: smooth; }
 
-    <div class="chart-block">
-      <div class="chart-head">
-        <span class="chart-title-group">
-          <span class="chart-title">經濟 × 社會</span>
-          <button class="info-btn" type="button" aria-label="說明"
-            data-info-title="經濟 × 社會"
-            data-info-body="（此處放這張圖的說明文字佔位,之後補上）">?</button>
-        </span>
-        <div class="toggle-group" data-chart="eqli">
-          <button data-mode="party" class="active">政黨</button>
-          <button data-mode="country">國家</button>
-          <button data-mode="all">所有填答者</button>
-        </div>
-      </div>
-      <div class="chart-percentile" id="chart-eqli-percentile"></div>
-      <div id="chart-eqli"></div>
-    </div>
+body {
+  margin: 0;
+  background: var(--paper);
+  background-image:
+    linear-gradient(var(--paper-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--paper-line) 1px, transparent 1px);
+  background-size: 32px 32px;
+  color: var(--ink);
+  font-family: 'Noto Sans TC', sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+}
 
-    <div class="chart-block">
-      <div class="chart-head">
-        <span class="chart-title-group">
-          <span class="chart-title">個人選擇 × 政治體制</span>
-          <button class="info-btn" type="button" aria-label="說明"
-            data-info-title="個人選擇 × 政治體制"
-            data-info-body="（此處放這張圖的說明文字佔位,之後補上）">?</button>
-        </span>
-        <div class="toggle-group" data-chart="indem">
-          <button data-mode="party" class="active">政黨</button>
-          <button data-mode="country">國家</button>
-          <button data-mode="all">所有填答者</button>
-        </div>
-      </div>
-      <div class="chart-percentile" id="chart-indem-percentile"></div>
-      <div id="chart-indem"></div>
-    </div>
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
 
-    <div class="notes-block">
-      <p class="placeholder">（這裡放置說明或補充文字,請自行填寫）</p>
-    </div>
+.wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 20px 96px;
+}
 
-    <div class="footer-actions">
-      <button class="btn secondary" id="restart-btn">重新測驗</button>
-    </div>
-  </section>
+/* ---------- Header ---------- */
+.masthead {
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 18px;
+  margin-bottom: 36px;
+}
+.masthead .eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.masthead h1 {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 700;
+  font-size: clamp(28px, 5vw, 38px);
+  margin: 6px 0 8px;
+}
+.masthead p {
+  color: var(--ink-soft);
+  font-size: 15px;
+  max-width: 56ch;
+  margin: 0;
+}
 
-  <div class="footer-note">
-    灰點為各國政黨參考座標(取自 WVS Wave 7 分析)。你的座標以十字準星標示。若開啟「所有填答者」,藍色半透明點為其他人的歷史結果,即時自 Supabase 資料庫讀取。點擊任一個點可查看詳細數值。
-  </div>
-</div>
+/* ---------- Intro screen ---------- */
+.intro-card {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  padding: 28px;
+}
+.intro-card ul {
+  padding-left: 20px;
+  margin: 16px 0;
+}
+.intro-card li { margin-bottom: 6px; }
 
-<div id="dot-popover" class="dot-popover arrow-bottom hidden">
-  <div class="dot-popover-title"></div>
-  <div class="dot-popover-body"></div>
-</div>
+/* ---------- 通用章節樣式(供其他頁面擴充使用) ---------- */
+.section-heading {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 700;
+  font-size: 22px;
+  margin: 48px 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--ink);
+}
+section:first-of-type .section-heading { margin-top: 0; }
 
-<script type="module" src="app.js"></script>
-</body>
-</html>
+.content-card {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  padding: 28px;
+}
+.content-card ul {
+  padding-left: 20px;
+  margin: 16px 0;
+}
+.content-card li { margin-bottom: 6px; }
+.content-card p:first-child { margin-top: 0; }
+.content-card p:last-child { margin-bottom: 0; }
+
+.btn {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  border: 2px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 13px 26px;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+.btn:hover { background: #333c48; }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: 3px solid var(--c-liberty); outline-offset: 2px; }
+.btn.secondary {
+  background: transparent;
+  color: var(--ink);
+}
+.btn.secondary:hover { background: rgba(27,36,48,0.06); }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ---------- Progress ---------- */
+.progress-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.progress-track {
+  height: 3px;
+  background: var(--rule);
+  margin-bottom: 32px;
+  position: relative;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--ink);
+  transition: width 0.25s ease;
+}
+
+/* ---------- Question card ---------- */
+.q-card {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  padding: 32px 28px;
+  margin-bottom: 24px;
+}
+.q-text {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 500;
+  font-size: 20px;
+  margin: 0 0 20px;
+}
+
+.q-item {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--ink);
+  margin: 0 0 24px;
+}
+
+.pair-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ink);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.pair-labels span:first-child { text-align: left; }
+.pair-labels span:last-child { text-align: right; }
+
+/* scale row: 1-10 buttons */
+.scale-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: nowrap;
+}
+.scale-row.of4 .scale-btn { flex: 1; }
+.scale-btn {
+  flex: 1;
+  aspect-ratio: 1;
+  min-width: 0;
+  border: 1.5px solid var(--rule);
+  background: var(--paper);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s ease;
+}
+.scale-btn:hover { border-color: var(--ink); }
+.scale-btn:focus-visible { outline: 3px solid var(--c-liberty); outline-offset: 2px; }
+.scale-btn.selected {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.scale-endlabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 8px;
+}
+
+.q-note {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  margin: -12px 0 20px;
+}
+
+.choice-list { display: flex; flex-direction: column; gap: 8px; }
+.choice-btn {
+  text-align: left;
+  border: 1.5px solid var(--rule);
+  background: var(--paper);
+  padding: 12px 16px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 14.5px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+.choice-btn:hover { border-color: var(--ink); }
+.choice-btn.selected { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.choice-btn:focus-visible { outline: 3px solid var(--c-liberty); outline-offset: 2px; }
+
+.nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.nav-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+/* ---------- Ideology panel (nearest party + progress bars) ---------- */
+.ideology-panel {
+  background: var(--card);
+  border: 1.5px solid var(--ink);
+  padding: 28px;
+  margin-bottom: 8px;
+}
+.match-sentence {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0 0 26px;
+  text-align: center;
+}
+.match-sentence strong { color: var(--c-democracy); }
+
+.ibar-row { margin-bottom: 22px; }
+.ibar-row:last-child { margin-bottom: 0; }
+.ibar-tier {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 700;
+  font-size: 17px;
+  text-align: center;
+  margin-bottom: 8px;
+}
+.ibar-tier-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-left: 4px;
+}
+.ibar-track {
+  position: relative;
+  width: 100%;
+  display: flex;
+  border: 1px solid var(--rule);
+  overflow: hidden;
+}
+.ibar-track.big { height: 22px; }
+.ibar-track.small { height: 10px; }
+.ibar-fill-left { background: var(--c-equality); }
+.ibar-fill-right { background: var(--c-democracy); }
+.ibar-fill-single { background: var(--c-liberty); height: 100%; }
+.ibar-marker {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: var(--ink);
+  transform: translateX(-1px);
+}
+.ibar-endlabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 6px;
+}
+.ibar-explanation {
+  font-size: 12.5px;
+  margin: 8px 0 0;
+  line-height: 1.5;
+  text-align: center;
+}
+.ibar-explanation.placeholder {
+  color: var(--ink-soft);
+}
+
+.ibar-small-group {
+  margin-top: 26px;
+  padding-top: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.ibar-small-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.ibar-small-header strong { font-family: 'JetBrains Mono', monospace; }
+
+.ibar-overall-note {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+}
+.ibar-overall-note.placeholder {
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .ibar-small-group { grid-template-columns: 1fr; }
+}
+
+.chart-block { margin: 40px 0; }
+.chart-percentile {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  border: 1px solid var(--rule);
+  background: var(--card);
+  padding: 10px 14px;
+  margin-bottom: 14px;
+}
+.chart-percentile:empty { display: none; }
+.chart-percentile p { margin: 0; }
+.chart-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.chart-title-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.chart-title {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 700;
+  font-size: 18px;
+}
+.info-btn {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink-soft);
+  background: transparent;
+  color: var(--ink-soft);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.info-btn:focus-visible { outline: 3px solid var(--c-liberty); outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) {
+  .info-btn:hover { border-color: var(--ink); color: var(--ink); }
+}
+.toggle-group {
+  display: inline-flex;
+  border: 1.5px solid var(--ink);
+}
+.toggle-group button {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 6px 12px;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+.toggle-group button.active { background: var(--ink); color: var(--paper); }
+.toggle-group button:not(:last-child) { border-right: 1.5px solid var(--ink); }
+
+svg.chart {
+  width: 100%;
+  height: auto;
+  background: var(--card);
+  border: 1px solid var(--rule);
+}
+.chart text { font-family: 'JetBrains Mono', monospace; fill: var(--ink-soft); }
+.chart .axis-label { font-family: 'Noto Sans TC', sans-serif; fill: var(--ink); font-weight: 700; font-size: 13px; }
+.chart .pole-label {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  fill: var(--ink-soft);
+  opacity: 0.8;
+}
+.chart .party-dot { fill: #9aa3ad; opacity: 0.55; }
+.chart .country-dot { fill: var(--c-democracy); opacity: 0.7; }
+.chart .other-dot { fill: #3B5BA5; opacity: 0.55; }
+.chart .dot-hitarea { cursor: pointer; }
+.chart .dot-label {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 4.5px;
+  fill: var(--ink-soft);
+  pointer-events: none;
+}
+.chart .dot-label-country {
+  font-size: 5px;
+  font-weight: 700;
+  fill: var(--c-democracy);
+}
+.chart .me-dot { fill: var(--c-democracy); stroke: var(--paper); stroke-width: 2; }
+.chart .me-cross { stroke: var(--ink); stroke-width: 1.4; }
+
+/* 只在滑鼠裝置上才顯示 hover 高亮,避免手機因為 :hover 規則導致第一下點擊被吃掉、要點兩下才有反應 */
+@media (hover: hover) and (pointer: fine) {
+  .chart .party-dot.dot-hovered { opacity: 1; }
+  .chart .country-dot.dot-hovered { opacity: 1; }
+  .chart .other-dot.dot-hovered { opacity: 1; }
+}
+
+.footer-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.status-msg {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  margin-top: 10px;
+}
+.status-msg.ok { color: var(--c-individual); }
+.status-msg.err { color: var(--c-democracy); }
+
+.hidden { display: none !important; }
+
+/* ---------- Dot click popover ---------- */
+.dot-popover {
+  position: fixed;
+  z-index: 50;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 12px 14px;
+  min-width: 150px;
+  max-width: 220px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+  --arrow-left: 50%;
+}
+.dot-popover-title {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(237,234,233,0.25);
+}
+.dot-popover-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  margin-top: 4px;
+}
+.dot-popover-n {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(237,234,233,0.6);
+  margin-bottom: 6px;
+}
+.dot-popover-row span { color: rgba(237,234,233,0.7); }
+.dot-popover-tier {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 400;
+  font-size: 11px;
+  color: rgba(237,234,233,0.7);
+  margin-left: 4px;
+}
+.dot-popover::after {
+  content: "";
+  position: absolute;
+  left: var(--arrow-left);
+  width: 10px;
+  height: 10px;
+  background: var(--ink);
+  transform: translateX(-50%) rotate(45deg);
+}
+.dot-popover.arrow-bottom::after { bottom: -5px; }
+.dot-popover.arrow-top::after { top: -5px; }
+
+.notes-block {
+  background: #FFFFFF;
+  border: 1px solid var(--rule);
+  padding: 28px;
+  margin: 32px 0;
+  min-height: 120px;
+}
+.notes-block .placeholder {
+  color: var(--ink-soft);
+  text-align: center;
+  margin: 0;
+}
+
+.footer-note {
+  margin-top: 56px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+@media (max-width: 480px) {
+  .score-grid { grid-template-columns: repeat(2, 1fr); }
+  .scale-row { gap: 4px; }
+  .scale-btn { font-size: 11px; }
+}
