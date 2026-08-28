@@ -50,7 +50,6 @@ export const PARTIES = [
 // 國家層級參考點(佔位測試資料:目前用各國政黨的樣本數加權平均計算,
 // 之後有真實的國家調查數字,直接把對應國家那行換掉即可)
 // ============================================================
-// ============================================================
 // 國家層級參考點(來自世界價值觀調查工作簿「國家」工作表,不顯示樣本數)
 // ============================================================
 // ============================================================
@@ -70,6 +69,11 @@ export const COUNTRIES = [
   { country: "SG", equality: 5.21, liberty: 5.24, democracy: 7.03, individual: 3.44 },
   { country: "CN", equality: 5.73, liberty: 4.29, democracy: 5.98, individual: 2.6 },
   { country: "IN", equality: 5.73, liberty: 4.18, democracy: 5.89, individual: 2.46 },
+  { country: "CA", equality: 5.5, liberty: 6.97, democracy: 7.57, individual: 6.38 },
+  { country: "AU", equality: 4.98, liberty: 6.83, democracy: 7.16, individual: 6.51 },
+  { country: "VN", equality: 5.27, liberty: 5.48, democracy: 6.1, individual: 4.85 },
+  { country: "MY", equality: 5.08, liberty: 4.66, democracy: 5.62, individual: 3.71 },
+  { country: "KE", equality: 4.8, liberty: 4.8, democracy: 5.95, individual: 3.65 },
 ];
 
 
@@ -183,6 +187,7 @@ export const COUNTRY_NAME_ZH = {
   TW: "台灣", GE: "德國", RU: "俄羅斯", JP: "日本", GB: "英國",
   CA: "加拿大", US: "美國", HK: "香港", AU: "澳洲", KR: "韓國", MY: "馬來西亞",
   NI: "北愛爾蘭", NL: "荷蘭", BR: "巴西", SG: "新加坡", CN: "中國", IN: "印度",
+  VN: "越南", KE: "肯亞",
 };
 
 // ============================================================
