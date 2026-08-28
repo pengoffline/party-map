@@ -356,6 +356,14 @@ section:first-of-type .section-heading { margin-top: 0; }
 }
 
 .chart-block { margin: 40px 0; }
+.chart-percentile {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+.chart-percentile p { margin: 0; }
 .chart-head {
   display: flex;
   justify-content: space-between;
