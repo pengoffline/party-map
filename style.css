@@ -1,27 +1,47 @@
+/* ============================================================
+   政治價值測驗 — 全站樣式表
+   ------------------------------------------------------------
+   視覺風格:「量表紙本 / 方格紙」——米杏底 + 方格背景,墨藍文字,
+   標題用襯線字(像正式文件/選票),數據用等寬字(像儀表數字)。
+
+   共用給多個頁面:index.html(測驗+結果)、data-tables.html(總表)、
+   blank-template.html(擴充頁面範本)都引用這一份檔案。
+
+   四個維度各自有專屬顏色,全站統一,新增樣式時盡量沿用這套顏色語意:
+     --c-equality   平等 / 經濟軸       (琥珀)
+     --c-liberty    自由 / 社會軸       (靛藍)
+     --c-democracy  民主 / 政治體制軸   (磚紅)
+     --c-individual 個人 / 個人選擇軸   (墨綠)
+   ============================================================ */
+
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap');
 
+/* ---------- 全域顏色 / 字體變數 ---------- */
 :root {
-  --paper: #EDEAE9;
-  --paper-line: #D8D3CF;
-  --ink: #1B2430;
-  --ink-soft: #5B6470;
-  --rule: #B9B2AA;
+  --paper: #EDEAE9;       /* 頁面底色(米杏方格紙) */
+  --paper-line: #D8D3CF;  /* 方格紙格線顏色 */
+  --ink: #1B2430;         /* 主要文字/邊框顏色(墨藍) */
+  --ink-soft: #5B6470;    /* 次要文字顏色(較淡的墨藍灰) */
+  --rule: #B9B2AA;        /* 一般分隔線/邊框顏色(卡片邊框、表格格線等) */
 
-  --c-equality: #B4791F;   /* 琥珀 */
-  --c-liberty: #3B5BA5;    /* 靛藍 */
-  --c-democracy: #A63D40;  /* 磚紅 */
-  --c-individual: #3F6C51; /* 墨綠 */
+  /* 四個維度的識別色,全站統一使用,不要另外開新顏色 */
+  --c-equality: #B4791F;   /* 琥珀 — 平等 / 經濟軸 */
+  --c-liberty: #3B5BA5;    /* 靛藍 — 自由 / 社會軸 */
+  --c-democracy: #A63D40;  /* 磚紅 — 民主 / 政治體制軸(也拿來當「你的點」跟強調色用) */
+  --c-individual: #3F6C51; /* 墨綠 — 個人 / 個人選擇軸 */
 
-  --card: #F5F3F0;
-  --focus: #1B2430;
+  --card: #F5F3F0;   /* 卡片/區塊背景色(比頁面底色稍亮的米色) */
+  --focus: #1B2430;  /* 目前未實際使用,保留給未來 focus 樣式擴充 */
 }
 
+/* ---------- 基本重置 / 版面 ---------- */
 * { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
+  /* 用兩條線性漸層疊出方格紙效果,格子大小 32x32px,呼應「量表/問卷紙本」的視覺主題 */
   background: var(--paper);
   background-image:
     linear-gradient(var(--paper-line) 1px, transparent 1px),
@@ -33,23 +53,29 @@ body {
   min-height: 100vh;
 }
 
+/* 使用者開啟「減少動態效果」的系統設定時,關閉所有動畫/轉場 */
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
 
+/* 全站內容外層容器,固定最大寬度、置中,手機版靠 padding 留邊 */
 .wrap {
   max-width: 760px;
   margin: 0 auto;
   padding: 48px 20px 96px;
 }
 
-/* ---------- Header ---------- */
+/* ============================================================
+   頁首大標題區(masthead)
+   用在每個頁面最上方:小標籤 + 大標題 + 一段說明文字
+   ============================================================ */
 .masthead {
   border-bottom: 2px solid var(--ink);
   padding-bottom: 18px;
   margin-bottom: 36px;
 }
 .masthead .eyebrow {
+  /* 標題上方的小標籤,例如「POLITICAL VALUES SURVEY」 */
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
   letter-spacing: 0.14em;
@@ -59,17 +85,19 @@ body {
 .masthead h1 {
   font-family: 'Noto Serif TC', serif;
   font-weight: 700;
-  font-size: clamp(28px, 5vw, 38px);
+  font-size: clamp(28px, 5vw, 38px); /* 隨螢幕寬度縮放,手機不會爆版 */
   margin: 6px 0 8px;
 }
 .masthead p {
   color: var(--ink-soft);
   font-size: 15px;
-  max-width: 56ch;
+  max-width: 56ch; /* 限制每行字數,避免大螢幕上一行太長不好讀 */
   margin: 0;
 }
 
-/* ---------- Intro screen ---------- */
+/* ============================================================
+   首頁介紹畫面(intro screen,index.html #screen-intro)
+   ============================================================ */
 .intro-card {
   background: var(--card);
   border: 1px solid var(--rule);
@@ -81,8 +109,12 @@ body {
 }
 .intro-card li { margin-bottom: 6px; }
 
-/* ---------- 通用章節樣式(供其他頁面擴充使用) ---------- */
+/* ============================================================
+   通用章節樣式(給 data-tables.html / blank-template.html 等
+   「首頁以外的頁面」使用,用來做出跟首頁一致的章節區塊)
+   ============================================================ */
 .section-heading {
+  /* 章節標題:襯線粗體 + 底線,呼應 .masthead h1 的風格但層級較小 */
   font-family: 'Noto Serif TC', serif;
   font-weight: 700;
   font-size: 22px;
@@ -90,9 +122,11 @@ body {
   padding-bottom: 10px;
   border-bottom: 2px solid var(--ink);
 }
+/* 頁面第一個章節標題不用留這麼多上方留白(masthead 已經有留白了) */
 section:first-of-type .section-heading { margin-top: 0; }
 
 .content-card {
+  /* 一般內文卡片,樣式跟 .intro-card / .q-card 系出同源(米色卡片+邊框) */
   background: var(--card);
   border: 1px solid var(--rule);
   padding: 28px;
@@ -105,8 +139,11 @@ section:first-of-type .section-heading { margin-top: 0; }
 .content-card p:first-child { margin-top: 0; }
 .content-card p:last-child { margin-bottom: 0; }
 
-/* ---------- 資料總表 ---------- */
+/* ============================================================
+   資料總表(data-tables.html:政黨總表 / 國家總表)
+   ============================================================ */
 .table-scroll {
+  /* 表格在手機上可能會太寬,外層包一層可以左右滑動的容器 */
   overflow-x: auto;
   border: 1px solid var(--rule);
   background: var(--card);
@@ -115,7 +152,7 @@ section:first-of-type .section-heading { margin-top: 0; }
   width: 100%;
   border-collapse: collapse;
   font-size: 13.5px;
-  white-space: nowrap;
+  white-space: nowrap; /* 每個儲存格內容不換行,避免表格高度亂跳 */
 }
 .data-table th, .data-table td {
   padding: 10px 14px;
@@ -129,14 +166,15 @@ section:first-of-type .section-heading { margin-top: 0; }
   color: var(--ink);
   background: var(--paper);
   border-bottom: 2px solid var(--ink);
-  position: sticky;
+  position: sticky; /* 往下滑動內容時表頭固定不動 */
   top: 0;
 }
 .data-table th.sortable {
   cursor: pointer;
-  user-select: none;
+  user-select: none; /* 避免連續點擊排序時不小心選取到文字 */
 }
 .data-table th.sortable:hover { color: var(--c-liberty); }
+/* 用 ::after 偽元素預留排序箭頭的位置,平常是空的,排序後才會顯示 ▲/▼ */
 .data-table th.sortable::after {
   content: "";
   display: inline-block;
@@ -148,16 +186,21 @@ section:first-of-type .section-heading { margin-top: 0; }
 .data-table th.sorted-asc::after { content: "▲"; }
 .data-table th.sorted-desc::after { content: "▼"; }
 .data-table td.num {
+  /* 數字類欄位(分數、年份、樣本數)一律用等寬字,方便直向比對數字 */
   font-family: 'JetBrains Mono', monospace;
 }
 .data-table tbody tr:hover { background: rgba(27,36,48,0.04); }
 .table-tier {
+  /* 分數欄位裡跟在數字後面的評語文字,例如「6.75(中間偏左)」的「(中間偏左)」 */
   font-family: 'Noto Sans TC', sans-serif;
   font-size: 11px;
   color: var(--ink-soft);
   margin-left: 4px;
 }
 
+/* ============================================================
+   按鈕(全站共用:開始測驗、上一題/下一題、重新測驗等)
+   ============================================================ */
 .btn {
   font-family: 'Noto Sans TC', sans-serif;
   font-weight: 700;
@@ -171,16 +214,21 @@ section:first-of-type .section-heading { margin-top: 0; }
   transition: transform 0.12s ease, background 0.12s ease;
 }
 .btn:hover { background: #333c48; }
-.btn:active { transform: translateY(1px); }
+.btn:active { transform: translateY(1px); } /* 按下去有輕微下沉回饋 */
 .btn:focus-visible { outline: 3px solid var(--c-liberty); outline-offset: 2px; }
 .btn.secondary {
+  /* 次要按鈕(例如「上一題」「重新測驗」):鏤空樣式,不搶主要按鈕的視覺焦點 */
   background: transparent;
   color: var(--ink);
 }
 .btn.secondary:hover { background: rgba(27,36,48,0.06); }
 .btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
-/* ---------- Progress ---------- */
+/* ============================================================
+   測驗進度條(quiz #progress-label / #progress-fill)
+   計分題(26 題)用真實比例;附加題(demoAnswers 那 4 題)
+   固定顯示滿格,詳見 app.js renderDemoQuestion() 的註解
+   ============================================================ */
 .progress-row {
   display: flex;
   align-items: baseline;
@@ -202,7 +250,9 @@ section:first-of-type .section-heading { margin-top: 0; }
   transition: width 0.25s ease;
 }
 
-/* ---------- Question card ---------- */
+/* ============================================================
+   單一題目卡片(quiz #quiz-root 裡動態產生的內容)
+   ============================================================ */
 .q-card {
   background: var(--card);
   border: 1px solid var(--rule);
@@ -210,6 +260,7 @@ section:first-of-type .section-heading { margin-top: 0; }
   margin-bottom: 24px;
 }
 .q-text {
+  /* 題幹(每組共用的引導句,例如「你比較支持以下的哪個敘述？」) */
   font-family: 'Noto Serif TC', serif;
   font-weight: 500;
   font-size: 20px;
@@ -217,6 +268,7 @@ section:first-of-type .section-heading { margin-top: 0; }
 }
 
 .q-item {
+  /* 個別題目的具體敘述文字(例如某一條政策的名稱),字級比題幹小、用粗體無襯線字 */
   font-family: 'Noto Sans TC', sans-serif;
   font-weight: 700;
   font-size: 16px;
@@ -225,6 +277,7 @@ section:first-of-type .section-heading { margin-top: 0; }
 }
 
 .pair-labels {
+  /* 兩極敘述題(pair10)專用:左右各顯示一句相對的敘述 */
   display: flex;
   justify-content: space-between;
   font-family: 'Noto Sans TC', sans-serif;
@@ -237,17 +290,18 @@ section:first-of-type .section-heading { margin-top: 0; }
 .pair-labels span:first-child { text-align: left; }
 .pair-labels span:last-child { text-align: right; }
 
-/* scale row: 1-10 buttons */
+/* ---------- 1-10(或 1-4)數字方格選項列 ---------- */
 .scale-row {
   display: flex;
   gap: 6px;
   flex-wrap: nowrap;
 }
+/* .of4 用在 4 分制題目(agree4),只有 4 顆按鈕,所以每顆可以分配更寬 */
 .scale-row.of4 .scale-btn { flex: 1; }
 .scale-btn {
   flex: 1;
-  aspect-ratio: 1;
-  min-width: 0;
+  aspect-ratio: 1; /* 維持正方形按鈕 */
+  min-width: 0;    /* 允許在 flex 容器裡縮得比內容還窄,避免 10 顆按鈕在小螢幕上爆版 */
   border: 1.5px solid var(--rule);
   background: var(--paper);
   font-family: 'JetBrains Mono', monospace;
@@ -267,6 +321,7 @@ section:first-of-type .section-heading { margin-top: 0; }
   color: var(--paper);
 }
 .scale-endlabels {
+  /* 數字方格下方兩端的文字說明,例如「從不正當」/「總是正當」 */
   display: flex;
   justify-content: space-between;
   font-size: 12px;
@@ -275,12 +330,14 @@ section:first-of-type .section-heading { margin-top: 0; }
 }
 
 .q-note {
+  /* 附加題(不影響分析結果的那 4 題)專用的小提示文字,置於題幹下方 */
   font-family: 'JetBrains Mono', monospace;
   font-size: 11.5px;
   color: var(--ink-soft);
   margin: -12px 0 20px;
 }
 
+/* ---------- 文字選項按鈕列(附加題的居住地/政黨支持度/年齡) ---------- */
 .choice-list { display: flex; flex-direction: column; gap: 8px; }
 .choice-btn {
   text-align: left;
@@ -297,6 +354,7 @@ section:first-of-type .section-heading { margin-top: 0; }
 .choice-btn:focus-visible { outline: 3px solid var(--c-liberty); outline-offset: 2px; }
 
 .nav-row {
+  /* 每題卡片下方的「上一題 / 已作答提示 / 下一題」列 */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -307,25 +365,31 @@ section:first-of-type .section-heading { margin-top: 0; }
   color: var(--ink-soft);
 }
 
-/* ---------- Ideology panel (nearest party + progress bars) ---------- */
+/* ============================================================
+   結果頁最上方的「意識形態卡片」(app.js renderIdeologyPanel())
+   內容包含:最相近政黨句子 → 經濟/社會兩條大進度條 →
+   政治體制/個人選擇兩條小進度條 → 總體說明佔位文字
+   ============================================================ */
 .ideology-panel {
   background: var(--card);
-  border: 1.5px solid var(--ink);
+  border: 1.5px solid var(--ink); /* 邊框比其他卡片粗一點,強調這是結果頁的視覺重心 */
   padding: 28px;
   margin-bottom: 8px;
 }
 .match-sentence {
+  /* 「你的意識形態和 OO 支持者最接近」那句話 */
   font-family: 'Noto Serif TC', serif;
   font-size: 20px;
   font-weight: 500;
   margin: 0 0 26px;
   text-align: center;
 }
-.match-sentence strong { color: var(--c-democracy); }
+.match-sentence strong { color: var(--c-democracy); } /* 政黨名稱用強調色標出來 */
 
 .ibar-row { margin-bottom: 22px; }
 .ibar-row:last-child { margin-bottom: 0; }
 .ibar-tier {
+  /* 大進度條上方的評語文字,例如「中間偏左」,格式是「評語(數值)」 */
   font-family: 'Noto Serif TC', serif;
   font-weight: 700;
   font-size: 17px;
@@ -333,6 +397,7 @@ section:first-of-type .section-heading { margin-top: 0; }
   margin-bottom: 8px;
 }
 .ibar-tier-value {
+  /* 評語後面括號裡的數值部分,例如「(6.3)」 */
   font-family: 'JetBrains Mono', monospace;
   font-weight: 400;
   font-size: 13px;
@@ -340,6 +405,7 @@ section:first-of-type .section-heading { margin-top: 0; }
   margin-left: 4px;
 }
 .ibar-track {
+  /* 進度條的外框軌道,big 是經濟/社會那兩條,small 是政治體制/個人選擇那兩條 */
   position: relative;
   width: 100%;
   display: flex;
@@ -348,10 +414,13 @@ section:first-of-type .section-heading { margin-top: 0; }
 }
 .ibar-track.big { height: 22px; }
 .ibar-track.small { height: 10px; }
+/* 大進度條是左右兩色分割(類似 8values 風格),左半段跟右半段各自的顏色 */
 .ibar-fill-left { background: var(--c-equality); }
 .ibar-fill-right { background: var(--c-democracy); }
+/* 小進度條是單色實心填滿 */
 .ibar-fill-single { background: var(--c-liberty); height: 100%; }
 .ibar-marker {
+  /* 大進度條上標示確切分數位置的直線指標 */
   position: absolute;
   top: -3px;
   bottom: -3px;
@@ -360,6 +429,7 @@ section:first-of-type .section-heading { margin-top: 0; }
   transform: translateX(-1px);
 }
 .ibar-endlabels {
+  /* 進度條下方兩端的文字,例如「平等」/「市場」、「威權」/「自由」 */
   display: flex;
   justify-content: space-between;
   font-size: 12px;
@@ -367,6 +437,7 @@ section:first-of-type .section-heading { margin-top: 0; }
   margin-top: 6px;
 }
 .ibar-explanation {
+  /* 每個軸下方、依評語段落不同而變化的說明文字(佔位,使用者自行填寫實際內容) */
   font-size: 12.5px;
   margin: 8px 0 0;
   line-height: 1.5;
@@ -377,6 +448,7 @@ section:first-of-type .section-heading { margin-top: 0; }
 }
 
 .ibar-small-group {
+  /* 政治體制 + 個人選擇這兩條小進度條的並排容器 */
   margin-top: 26px;
   padding-top: 20px;
   display: grid;
@@ -392,6 +464,7 @@ section:first-of-type .section-heading { margin-top: 0; }
 .ibar-small-header strong { font-family: 'JetBrains Mono', monospace; }
 
 .ibar-overall-note {
+  /* 結果卡片最下方、不隨測驗結果改變的固定說明文字(佔位) */
   margin-top: 24px;
   padding-top: 18px;
   border-top: 1px solid var(--rule);
@@ -404,12 +477,17 @@ section:first-of-type .section-heading { margin-top: 0; }
   text-align: center;
 }
 
+/* 手機版把政治體制/個人選擇兩條小進度條改成上下堆疊,不要並排擠壓 */
 @media (max-width: 480px) {
   .ibar-small-group { grid-template-columns: 1fr; }
 }
 
+/* ============================================================
+   座標圖區塊(結果頁下方的兩張散點圖:經濟x社會、個人選擇x政治體制)
+   ============================================================ */
 .chart-block { margin: 40px 0; }
 .chart-percentile {
+  /* 圖表標題下方、SVG 圖本身上方的方框,顯示「你比 X% 的填答者更偏向 OO」 */
   font-family: 'JetBrains Mono', monospace;
   font-size: 12.5px;
   color: var(--ink-soft);
@@ -419,9 +497,12 @@ section:first-of-type .section-heading { margin-top: 0; }
   padding: 10px 14px;
   margin-bottom: 14px;
 }
+/* 完全沒有歷史填答資料時,app.js 會把這個區塊留空,靠 :empty 直接隱藏整個框,
+   避免畫面上出現一個看起來像 bug 的空白方框 */
 .chart-percentile:empty { display: none; }
 .chart-percentile p { margin: 0; }
 .chart-head {
+  /* 圖表標題列:標題+說明按鈕 在左,「政黨/國家/所有填答者」切換鈕在右 */
   display: flex;
   justify-content: space-between;
   align-items: baseline;
@@ -440,6 +521,7 @@ section:first-of-type .section-heading { margin-top: 0; }
   font-size: 18px;
 }
 .info-btn {
+  /* 圖表標題右側的「?」說明按鈕,點擊後用 .dot-popover 顯示說明 */
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -456,10 +538,12 @@ section:first-of-type .section-heading { margin-top: 0; }
   padding: 0;
 }
 .info-btn:focus-visible { outline: 3px solid var(--c-liberty); outline-offset: 2px; }
+/* :hover 效果限定在真正的滑鼠裝置才生效,原因見下方「觸控裝置」那段註解 */
 @media (hover: hover) and (pointer: fine) {
   .info-btn:hover { border-color: var(--ink); color: var(--ink); }
 }
 .toggle-group {
+  /* 圖表右上角「政黨 / 國家 / 所有填答者」三個獨立開關按鈕(可同時開多個,不是單選) */
   display: inline-flex;
   border: 1.5px solid var(--ink);
 }
@@ -475,15 +559,17 @@ section:first-of-type .section-heading { margin-top: 0; }
 .toggle-group button.active { background: var(--ink); color: var(--paper); }
 .toggle-group button:not(:last-child) { border-right: 1.5px solid var(--ink); }
 
+/* ---------- 散點圖本體(app.js buildChartSVG() 產生的 <svg class="chart">) ---------- */
 svg.chart {
   width: 100%;
   height: auto;
   background: var(--card);
   border: 1px solid var(--rule);
 }
-.chart text { font-family: 'JetBrains Mono', monospace; fill: var(--ink-soft); }
+.chart text { font-family: 'JetBrains Mono', monospace; fill: var(--ink-soft); } /* 格線數字預設樣式 */
 .chart .axis-label { font-family: 'Noto Sans TC', sans-serif; fill: var(--ink); font-weight: 700; font-size: 13px; }
 .chart .pole-label {
+  /* 圖表外側四個方向的標籤(例如「平等」「市場」「自由」「威權」) */
   font-family: 'Noto Sans TC', sans-serif;
   font-weight: 700;
   font-size: 12px;
@@ -491,31 +577,45 @@ svg.chart {
   fill: var(--ink-soft);
   opacity: 0.8;
 }
-.chart .party-dot { fill: #9aa3ad; opacity: 0.55; }
-.chart .country-dot { fill: var(--c-democracy); opacity: 0.7; }
-.chart .other-dot { fill: #3B5BA5; opacity: 0.55; }
+.chart .party-dot { fill: #9aa3ad; opacity: 0.55; }        /* 政黨參考點:灰色 */
+.chart .country-dot { fill: var(--c-democracy); opacity: 0.7; } /* 國家參考點:磚紅色,比政黨點大一點 */
+.chart .other-dot { fill: #3B5BA5; opacity: 0.55; }        /* 其他填答者的點:靛藍色 */
+/* .dot-hitarea 是疊在視覺圓點上方、真正負責承接點擊/hover 的「透明大圓」,
+   半徑比看得到的圓點大很多,是專門為了解決手機觸控熱區太小點不到的問題,
+   詳見 app.js buildChartSVG() 裡 party/country dot 的產生邏輯 */
 .chart .dot-hitarea { cursor: pointer; }
 .chart .dot-label {
+  /* 觸控裝置專用的固定小字標籤(國碼+政黨名 / 國家全名),取代「點擊才顯示」的彈出框,
+     因為手機縮放後彈出框定位容易跑掉,改成直接嵌在圖上的靜態文字比較可靠。
+     桌面版(有 hover 能力的滑鼠裝置)不會產生這些文字,只有觸控裝置才會渲染,詳見 app.js。 */
   font-family: 'Noto Sans TC', sans-serif;
   font-size: 4.5px;
   fill: var(--ink-soft);
-  pointer-events: none;
+  pointer-events: none; /* 純顯示用,不要擋住底下圓點的點擊事件 */
 }
 .chart .dot-label-country {
+  /* 國家標籤比政黨標籤稍大、用強調色,方便跟一堆政黨標籤區分 */
   font-size: 5px;
   font-weight: 700;
   fill: var(--c-democracy);
 }
-.chart .me-dot { fill: var(--c-democracy); stroke: var(--paper); stroke-width: 2; }
-.chart .me-cross { stroke: var(--ink); stroke-width: 1.4; }
+.chart .me-dot { fill: var(--c-democracy); stroke: var(--paper); stroke-width: 2; } /* 使用者自己的點 */
+.chart .me-cross { stroke: var(--ink); stroke-width: 1.4; } /* 使用者的點外面那個十字準星 */
 
-/* 只在滑鼠裝置上才顯示 hover 高亮,避免手機因為 :hover 規則導致第一下點擊被吃掉、要點兩下才有反應 */
+/* 圓點的 hover 高亮效果,只在滑鼠裝置上套用。
+   原因:iOS Safari 有個經典陷阱——只要元素綁了 :hover 樣式,觸控裝置第一下點擊
+   會被當成「觸發 hover」而不是「觸發 click」,要點兩下才有反應。把 :hover 規則
+   包在這個 media query 裡,觸控裝置完全不會套用,自然不會有雙擊問題。
+   對應的 JS 邏輯(mouseover/mouseout 才加上 .dot-hovered class)在 app.js。 */
 @media (hover: hover) and (pointer: fine) {
   .chart .party-dot.dot-hovered { opacity: 1; }
   .chart .country-dot.dot-hovered { opacity: 1; }
   .chart .other-dot.dot-hovered { opacity: 1; }
 }
 
+/* ============================================================
+   結果頁底部:操作按鈕列 / 自動儲存狀態文字
+   ============================================================ */
 .footer-actions {
   display: flex;
   gap: 12px;
@@ -524,6 +624,7 @@ svg.chart {
 }
 
 .status-msg {
+  /* 自動儲存到 Supabase 的狀態提示(儲存中 / 已儲存 / 失敗),app.js saveResult() 控制 */
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
   margin-top: 10px;
@@ -531,9 +632,12 @@ svg.chart {
 .status-msg.ok { color: var(--c-individual); }
 .status-msg.err { color: var(--c-democracy); }
 
-.hidden { display: none !important; }
+.hidden { display: none !important; } /* 全站共用的畫面切換(intro/quiz/result 三個畫面互相切換用) */
 
-/* ---------- Dot click popover ---------- */
+/* ============================================================
+   點擊/hover 彈出框(政黨、國家、填答者的點 + 圖表說明「?」按鈕共用同一套視覺)
+   帶三角尖角的深色小卡片,位置由 app.js positionPopover() 動態計算
+   ============================================================ */
 .dot-popover {
   position: fixed;
   z-index: 50;
@@ -543,7 +647,7 @@ svg.chart {
   min-width: 150px;
   max-width: 220px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.22);
-  --arrow-left: 50%;
+  --arrow-left: 50%; /* 這個變數由 JS 動態設定,讓三角尖角對準實際點擊的座標 */
 }
 .dot-popover-title {
   font-family: 'Noto Sans TC', sans-serif;
@@ -554,6 +658,7 @@ svg.chart {
   border-bottom: 1px solid rgba(237,234,233,0.25);
 }
 .dot-popover-row {
+  /* 彈出框裡「平等 6.75(中間偏左)」這種一列一個維度的資訊列 */
   display: flex;
   justify-content: space-between;
   gap: 12px;
@@ -562,6 +667,7 @@ svg.chart {
   margin-top: 4px;
 }
 .dot-popover-n {
+  /* 政黨的樣本數那一行,例如「N=251」,只有政黨資料裡有 n 值時才會顯示 */
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   color: rgba(237,234,233,0.6);
@@ -569,12 +675,14 @@ svg.chart {
 }
 .dot-popover-row span { color: rgba(237,234,233,0.7); }
 .dot-popover-tier {
+  /* 數值後面括號裡的評語文字,例如「(中間偏左)」 */
   font-family: 'Noto Sans TC', sans-serif;
   font-weight: 400;
   font-size: 11px;
   color: rgba(237,234,233,0.7);
   margin-left: 4px;
 }
+/* 用 ::after 偽元素做出指向點擊位置的三角形尖角(旋轉 45 度的正方形) */
 .dot-popover::after {
   content: "";
   position: absolute;
@@ -584,11 +692,16 @@ svg.chart {
   background: var(--ink);
   transform: translateX(-50%) rotate(45deg);
 }
+/* 尖角預設朝下(彈出框顯示在點擊位置上方);如果上方空間不夠,
+   app.js 會改用 .arrow-top,讓彈出框改顯示在下方、尖角朝上 */
 .dot-popover.arrow-bottom::after { bottom: -5px; }
 .dot-popover.arrow-top::after { top: -5px; }
 
+/* ============================================================
+   結果頁座標圖下方的白底文字區塊(使用者自行填寫補充說明用)
+   ============================================================ */
 .notes-block {
-  background: #FFFFFF;
+  background: #FFFFFF; /* 特意用純白,跟其他區塊的米色系(--card)做出區隔 */
   border: 1px solid var(--rule);
   padding: 28px;
   margin: 32px 0;
@@ -600,6 +713,9 @@ svg.chart {
   margin: 0;
 }
 
+/* ============================================================
+   頁尾說明文字(每個頁面最下方的小字提醒/版權說明)
+   ============================================================ */
 .footer-note {
   margin-top: 56px;
   padding-top: 16px;
@@ -608,6 +724,13 @@ svg.chart {
   color: var(--ink-soft);
 }
 
+/* ============================================================
+   手機版(寬度 480px 以下)的個別調整
+   注意:.score-grid 這個 class 是舊版結果頁用過的四宮格分數卡片,
+   目前 index.html 已經改用 .ideology-panel 呈現,沒有 .score-grid
+   這個元素了,這行規則保留著也不影響任何東西,之後如果確定完全用
+   不到,可以連同這個 media query 一起刪除。
+   ============================================================ */
 @media (max-width: 480px) {
   .score-grid { grid-template-columns: repeat(2, 1fr); }
   .scale-row { gap: 4px; }
