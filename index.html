@@ -10,22 +10,23 @@
 <div class="wrap">
 
   <header class="masthead">
-    <div class="eyebrow">POLITICAL VALUES SURVEY · 26 題</div>
-    <h1>你的政治座標</h1>
-    <p>回答 26 題,量測你在「平等」「自由」「民主」「個人」四個維度上的位置,並與各國政黨對照。</p>
+    <div class="eyebrow">PENGUIN OFFLINE</div>
+    <h1>Party Values Map</h1>
+    <p>根據世界價值觀調查，找出你的政治定位，比較你和各國不同政黨支持者的差異</p>
   </header>
 
   <!-- ============ INTRO ============ -->
   <section id="screen-intro">
     <div class="intro-card">
-      <p>這份測驗依據 World Values Survey 題組改編,總共 26 題,大約需要 5-8 分鐘完成。</p>
+      <p>本測驗題目源自跨國研究「世界價值觀調查」（World Values Survey）第七波問卷（2017-2022年施測）中與政治相關的題目，共有26題，作答時間約10分，分為三個面向和一個綜合分數，以1-10分衡量。</p>
       <ul>
-        <li><strong>平等</strong>:對收入分配、政府再分配角色的態度</li>
-        <li><strong>民主</strong>:對民主體制、政治權威、監控權力的態度</li>
-        <li><strong>個人</strong>:對個人生活自主、道德議題的開放程度</li>
-        <li><strong>自由</strong>:由「民主」與「個人」兩者平均而來,代表政治自由與文化自由的綜合</li>
+        <li><strong>經濟（市場⭤平等）</strong>：得分接近1表示傾向自由放任與個人競爭的價值觀，接近10則較支持政府介入以提升平等</li>
+        <li><strong>政治體制（威權⭤民主）</strong>：得分接近1表示支持強人統治、政府監控，接近10則重視民主和限縮政府權利</li>
+        <li><strong>個人選擇（傳統⭤進步）</strong>：得分接近1表示對於性與生命持有保守的看法，接近10則較為開放、更強調自主權利</li>
+        <li><strong>社會</strong>：政治體制與個人選擇的平均值，代表政治與文化上的總體自由度</li>
       </ul>
-      <p>作答完成後,你的結果會被畫在座標圖上,並可選擇儲存到資料庫、與其他填答者的結果疊圖比較。</p>
+      <p>測驗完成後，我們會透過得分分析你的政治傾向，並使用WVS對各國的調查結果，計算出你與哪一個主要政黨的支持者群體擁有最相近的看法，國家涵蓋台、港、馬、美、日等共12區域。並且有兩張分布圖讓你自行比較和不同政黨、國家、其他填答者的差異。</p>
+      <p><a href="faq.html">答疑解惑</a> · <a href="data-table.html">政黨與國家原始資料</a></p>       
       <button class="btn" id="start-btn">開始測驗 →</button>
     </div>
   </section>
@@ -34,7 +35,7 @@
   <section id="screen-quiz" class="hidden">
     <div class="progress-row">
       <span id="progress-label">Q01 / 26</span>
-      <span>每題選一個最接近你想法的答案</span>
+      <span></span>
     </div>
     <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
     <div id="quiz-root"></div>
@@ -52,7 +53,7 @@
           <span class="chart-title">經濟 × 社會</span>
           <button class="info-btn" type="button" aria-label="說明"
             data-info-title="經濟 × 社會"
-            data-info-body="（此處放這張圖的說明文字佔位,之後補上）">?</button>
+            data-info-body="平等和自由的一端包含進步主義、民主社會主義、古典馬克思主義等；平等和威權的一端包含威權社會主義等；市場和威權的一端包含保守主義、法西斯主義等；市場和自由的一端包含資本主義、保守自由主義等。&#13;電腦版滑鼠懸停點位可查看詳細資料。">?</button>
         </span>
         <div class="toggle-group" data-chart="eqli">
           <button data-mode="party" class="active">政黨</button>
@@ -70,7 +71,7 @@
           <span class="chart-title">個人選擇 × 政治體制</span>
           <button class="info-btn" type="button" aria-label="說明"
             data-info-title="個人選擇 × 政治體制"
-            data-info-body="（此處放這張圖的說明文字佔位,之後補上）">?</button>
+            data-info-body="靠近右上表示最高的自由程度；靠近右下則民主程度低但個人自由度高；靠近左下則最為集體主義；靠近左上則支持民主但有較傳統的價值觀">?</button>
         </span>
         <div class="toggle-group" data-chart="indem">
           <button data-mode="party" class="active">政黨</button>
@@ -83,7 +84,14 @@
     </div>
 
     <div class="notes-block">
-      <p class="placeholder">（這裡放置說明或補充文字,請自行填寫）</p>
+      <p class="placeholder">
+      <p><a href="faq.html">答疑解惑</a> · <a href="data-table.html">政黨與國家原始資料</a></p>
+      <p><strong>本網站目前是公測階段，未來預計新增找尋最接近的意識形態、依據年齡層分析等功能，並將釋出對台、港、中、美等國政黨、性別、年齡、族群價值觀差異的詳細分析。且等到WVS第八波資料釋出，政黨資料也會更新，請務必追蹤離線企鵝以掌握動態</strong></p>
+      <p>關於離線企鵝：</p>
+      <p><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" width="20" height="20"><a href="https://www.youtube.com/@penguin.offline">YouTube</a></p>
+      <p><img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" width="20" height="20"><a href="https://www.instagram.com/penguin.offline">Instagram</a></p>
+      <p><img src="https://upload.wikimedia.org/wikipedia/commons/d/db/Threads_%28app%29.png" width="20" height="20"><a href="https://www.threads.com/@penguin.offline">Threads</a></p>
+      </p>
     </div>
 
     <div class="footer-actions">
@@ -92,7 +100,9 @@
   </section>
 
   <div class="footer-note">
-    灰點為各國政黨參考座標(取自 WVS Wave 7 分析)。你的座標以十字準星標示。若開啟「所有填答者」,藍色半透明點為其他人的歷史結果,即時自 Supabase 資料庫讀取。點擊任一個點可查看詳細數值。
+    Party Values Map · beta 1.0版<br>
+    CC BY-SA 4.0 · 離線企鵝 2026.09<br>
+    <a href="https://github.com/pengoffline/party-map/tree/main"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/GitHub_Invertocat_Logo.svg" width="20" height="20">GitHub Repo.</a>
   </div>
 </div>
 
