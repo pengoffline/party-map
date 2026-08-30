@@ -3,45 +3,78 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Party Map • 答疑解惑</title>
+<title>世界政黨地圖 • 答疑解惑</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="wrap">
 
   <header class="masthead">
-    <div class="eyebrow">SECTION LABEL · 副標籤文字</div>
+    <div class="eyebrow">FAQ</div>
     <h1>答疑解惑</h1>
-    <p>這裡放一段簡短說明,介紹這個頁面的用途,樣式跟首頁的說明文字一致。</p>
+    <p><a href="#">回首頁</a></p>
   </header>
 
-  <!-- ============ 章節一 ============ -->
   <section>
-    <h2 class="section-heading">第一個章節標題</h2>
+    <h2 class="section-heading">關於測驗</h2>
     <div class="content-card">
-      <p>這裡放章節內容。這個 .content-card 區塊背景跟首頁的題目卡片、說明卡片同一套樣式,可以直接放文字、清單、表格等內容。</p>
-      <ul>
-        <li>條列項目一</li>
-        <li>條列項目二</li>
-      </ul>
+      <p><b>這些題目是怎麼來的？</b></p>
+這些題目源自「世界價值觀調查」（World Values Survey），WVS開始於1981年，起源於歐洲價值觀調查，台灣於1995年首次參加調查，2017-2022年的調查涵蓋全球10萬人，累計至今約有百國參加。WVS的題目大致上包含家庭、經濟、信任感、宗教信仰、性別、道德感、民主等等，整份問卷約有近300題，每年題目略有不同，採面訪方式進行，這份「世界政黨地圖」是我個人從其中挑選和政治較為相關的26+4題，用同一套標準分析全世界的政治立場。
+      <p><a href="https://srda.sinica.edu.tw/plan/?idx=SRDA.AS010">台灣世界價值觀調查</a>，包含歷年調查結果、抽樣方法，但只有各題回答分布，沒有每位受訪者的原始資料。</p>
+      <p><a href="https://www.worldvaluessurvey.org/">世界價值觀調查網站</a>，可在這裡下載部分國家的原始題目、完整的測驗結果（包含每一筆受訪者的對每個題目的回答），以及使用線上分析工具（可比較同一題目不同國家、族裔、教育程度、性別、年齡層的回答，但不能直接比較政黨）。</p>
+      <p><b>這些數字是怎麼計算的？</b></p>
+      <p>1-10的計分方法是基於WVS測驗題目的原始設計，以和其他受試者比較，部分選項為1-4的題目也是依照WVS的題目，計算時會將1-4重新分配為1-10分，1 2 3 4分別對應到1 4 7 10，每題權重相等，基於原始題目敘述，部分題目是反向計分的，將某一面向下的題目反向計分後得分平均起來，就得到該面向的總分了。</p>
+      <p><b>這些政黨支持者資料是怎麼來的？</b></p>
+<p>WVS調查中有一個題目是詢問受訪者大選會投給哪個政黨，只要從測驗結果原始資料xls檔中篩選出該政黨的支持者，依照前述的計分方式，分別計算他們在三個面向的得分，就能分析其定位了。<br>
+      <p><b>為什麼是這些政黨？</b></p>
+<p>1.	只有部分國家能取得WVS的原始資料，也才能進行政黨分析。<br>
+2.	這些政黨的選民定位在近十年沒有太大的改變（德國、美國、英國、加拿大、澳洲），或雖然政黨改變了，但精神和基本盤被傳承下來（自由韓國黨→國民力量、和諧陣線→國民聯盟）。<br>
+3.	這些政黨的樣本數足夠。例外：日本共產黨、台灣時代力量、香港青年新政等，這些小黨是因為和該國其他政黨差異大而刻意保留的。</p>
+    </div>
+      <p><b>測驗最後的左右認同、國家、政黨與年齡問題的用途是什麼？</b></p>
+<p><b>個人研究用。</b>熟悉WVS系統操作方式、篩選題目、計算42黨和16國政治立場、挑選政治意識形態、設計網站架構花了我超過一個月的空閒時間，所以我很想要調查一下目前這些資料間的關係，不然太虧了。如果填測驗的人達到500位以上，我就寫一份調查結果，所以<b>務必分享給朋友呀！</b>事實上這幾個題目也是WVS裡面本來就有的，結果存在Supabase，你也不需要有安全疑慮，這整個網站都是開源的，原始碼都在GitHub上，只能儲存你填的那幾道問題，也沒辦法將你填答結果和你個人資料聯繫起來，也完全沒有使用Cookie或Google帳戶什麼的，因為我根本做不出來。</p>
+  </section>
+
+  <section>
+    <h2 class="section-heading">關於其他細節</h2>
+    <div class="content-card">
+      <p><b>這份測驗的靈感來源？</b><p>
+      <p><a href="https://zh.wikipedia.org/wiki/%E8%8B%B1%E6%A0%BC%E5%B0%94%E5%93%88%E7%89%B9-%E9%9F%A6%E5%B0%94%E7%AD%96%E5%B0%94%E4%B8%96%E7%95%8C%E6%96%87%E5%8C%96%E5%9C%B0%E5%9B%BE">英格爾哈特-韋爾策爾世界文化地圖</a>：另一份基於WVS的特定題目，比較世界不同國家文化的二維分布圖，分為傳統－世俗、生存－個人表達兩軸。</p>
+      <p><a href="https://politicalcompass.org/">政治羅盤</a>：一份相當流行的政治測驗，結果用經濟自由度和社會自由度組成的二維圖表呈現。</p>
+      <p><a href="https://8values.github.io/">8 Values</a>：一份政治測驗，結果用經濟、外交、民權（類似本測驗的政治體制）、社會（類似本測驗的個人選擇）四軸呈現。</p>
+      <p><b>這和左右翼有關嗎？</b></p>
+<p>有關但並非絕對，左右翼包含經濟、政治與文化面向，大致而言，在這份測驗裡，數字大的為左翼，數字小的為右翼<br>
+      <p><b>測驗結果可以等同政治羅盤嗎？</b></p>
+<p><b>不行！</b>首先政治羅盤的題目邏輯和本測驗不同，本測驗是從WVS篩選出來的有限題目，不能完整的表達出政治立場。其次這個測驗的結果會比政治羅盤偏向自由的一端許多，政治羅盤測驗的中間0.0處，大概相當於這個測驗的自由度6.0到7.0間。政治羅盤測得自由+3.0者在這個測驗大概是8.0。最後本測驗的題目選項多數是10分制而非政治羅盤的4級制，因此分數分布結果會有相當的出入。</p>
+      <p><b>我的結果為什麼和我想的不一樣？</b></p>
+<p><b>因為這些計算方式存在缺陷。</b>舉例而言，經濟相關的題目中多次提到政府與國家，而無政府主義者可能會對此不滿；由於比較各國政黨，性交易一題得分和進步派有相當大的相關性，所以算在個人選擇內，但部分左翼和女性主義派別可能會相當反對這個概念。</p>
+      <p><b>什麼時候這些資料會更新？</b></p>
+<p><b>不知道。</b>WVS第八波台灣部分已經調查完成，但原始資料未釋出，其他國家的資料亦然，如果想知道最新動態的話（例如日本的幾個新政黨、台灣民眾黨、因為樣本數少這次沒列入的英國改革黨、德國另類選擇黨），可以追蹤離線企鵝。</p>
     </div>
   </section>
 
-  <!-- ============ 章節二 ============ -->
   <section>
-    <h2 class="section-heading">第二個章節標題</h2>
+    <h2 class="section-heading">關於作者</h2>
     <div class="content-card">
-      <p>這裡放另一段內容。可以直接複製這個 &lt;section&gt; 區塊來新增更多章節,只要換掉 h2 文字跟裡面的內容即可。</p>
+      <p><b>作者是誰？</b></p>
+      離線企鵝。
+      <p><a href="https://www.youtube.com/@penguin.offline"><img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" width="20" height="20">YouTube</a></p>
+      <p><img src="https://upload.wikimedia.org/wikipedia/commons/d/db/Threads_%28app%29.png" width="20" height="20"><a href="https://www.threads.com/@penguin.offline">Threads</a></p>
+      <p><a href="https://www.instagram.com/penguin.offline"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" width="20" height="20">Instagram</a></p>
+      </p>
+      <p><b>離線企鵝可信嗎？</b></p>
+<b>不可信。</b>離線企鵝既不讀政治，也沒修統計，程式設計更是半吊子，請問把這隻鵝的東西當成學術研究檢視。但離線企鵝是真鵝，真正地在經營生活，不是網軍什麼的，做這個也不是想替什麼政黨背書（畢竟你也看到了，這張地圖上民進黨和國民黨的位置非常接近）。
+      <p><b>離線企鵝是什麼政治立場？</b></p>
+離線企鵝經濟67社會87。
+      <p><b>這個網站是AI做的嗎？</b></p>
+<b>是也不是。</b>網站所有肉眼可見的文字說明、題目計算方式、不同政治立場的位置、地圖呈現方式、網站網頁組織全部都是我自己撰寫、設計的。但原始碼基本上是Claude Sonnet 5 Medium生成的，除了一些比較簡單的HTML和CSS。
     </div>
   </section>
-
-  <!-- ============ 白底文字區塊範例 ============ -->
-  <div class="notes-block">
-    <p class="placeholder">（這是一個白底文字區塊,適合放需要跟其他區塊視覺區隔的補充說明,直接複製使用即可）</p>
-  </div>
 
   <div class="footer-note">
-    這裡放頁尾說明文字,樣式跟首頁的頁尾一致。
+    Party Values Map · beta 1.0版<br>
+    CC BY-SA 4.0 · 離線企鵝 2026.09<br>
+    <a href="https://github.com/pengoffline/party-map/tree/main"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/GitHub_Invertocat_Logo.svg" width="20" height="20">GitHub Repo.</a>
   </div>
 </div>
 
