@@ -32,6 +32,12 @@
 
   --card: #F5F3F0;   /* 卡片/區塊背景色(比頁面底色稍亮的米色) */
   --focus: #1B2430;  /* 目前未實際使用,保留給未來 focus 樣式擴充 */
+
+  /* 結果頁四條進度條專用的粉彩填色(與上面文字/圖表用的深色識別色分開管理) */
+  --bar-equality: #F9BABA;   /* 平等 / 經濟軸 */
+  --bar-liberty: #C8E4BC;    /* 自由 / 社會軸 */
+  --bar-democracy: #F5F5A7;  /* 民主 / 政治體制軸 */
+  --bar-individual: #92D9F8; /* 個人 / 個人選擇軸 */
 }
 
 /* ---------- 基本重置 / 版面 ---------- */
@@ -414,20 +420,9 @@ section:first-of-type .section-heading { margin-top: 0; }
 }
 .ibar-track.big { height: 22px; }
 .ibar-track.small { height: 10px; }
-/* 大進度條是左右兩色分割(類似 8values 風格),左半段跟右半段各自的顏色 */
-.ibar-fill-left { background: var(--c-equality); }
-.ibar-fill-right { background: var(--c-democracy); }
-/* 小進度條是單色實心填滿 */
-.ibar-fill-single { background: var(--c-liberty); height: 100%; }
-.ibar-marker {
-  /* 大進度條上標示確切分數位置的直線指標 */
-  position: absolute;
-  top: -3px;
-  bottom: -3px;
-  width: 2px;
-  background: var(--ink);
-  transform: translateX(-1px);
-}
+/* 四條進度條(不分大小)統一為「從左端往右填色」的單色填滿樣式,
+   分數 1 時空白、10 時整條填滿;實際顏色由 app.js 依維度用 inline style 帶入 --bar-* 變數 */
+.ibar-fill-single { height: 100%; }
 .ibar-endlabels {
   /* 進度條下方兩端的文字,例如「平等」/「市場」、「威權」/「自由」 */
   display: flex;
