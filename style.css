@@ -34,10 +34,10 @@
   --focus: #1B2430;  /* 目前未實際使用,保留給未來 focus 樣式擴充 */
 
   /* 結果頁四條進度條專用的粉彩填色(與上面文字/圖表用的深色識別色分開管理) */
-  --bar-equality: #F9BABA;   /* 平等 / 經濟軸 */
-  --bar-liberty: #C8E4BC;    /* 自由 / 社會軸 */
-  --bar-democracy: #F5F5A7;  /* 民主 / 政治體制軸 */
-  --bar-individual: #92D9F8; /* 個人 / 個人選擇軸 */
+  --bar-equality: #BB8C8C;   /* 平等 / 經濟軸 */
+  --bar-liberty: #96AB8D;    /* 自由 / 社會軸 */
+  --bar-democracy: #B8B87D;  /* 民主 / 政治體制軸 */
+  --bar-individual: #6EA3BA; /* 個人 / 個人選擇軸 */
 }
 
 /* ---------- 基本重置 / 版面 ---------- */
@@ -429,12 +429,12 @@ section:first-of-type .section-heading { margin-top: 0; }
   justify-content: space-between;
   font-size: 12px;
   color: var(--ink-soft);
-  margin-top: 6px;
+  margin-top: 4px;
 }
 .ibar-explanation {
   /* 每個軸下方、依評語段落不同而變化的說明文字(佔位,使用者自行填寫實際內容) */
   font-size: 12.5px;
-  margin: 8px 0 0;
+  margin: 3px 0 0;
   line-height: 1.5;
   text-align: center;
 }
@@ -706,6 +706,25 @@ svg.chart {
   color: var(--ink-soft);
   text-align: center;
   margin: 0;
+}
+
+/* ============================================================
+   內部連結(站內頁面互相連結用,例如 index.html ↔ data-tables.html
+   之間的「查看完整資料表格」「回到測驗」等連結)
+   ============================================================ */
+.internal-link {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 1px;
+  font-weight: 500;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.internal-link:visited { color: var(--ink); }
+.internal-link:hover,
+.internal-link:focus-visible {
+  color: var(--c-democracy);
+  border-color: var(--c-democracy);
 }
 
 /* ============================================================
