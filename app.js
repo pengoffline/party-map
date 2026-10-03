@@ -292,14 +292,12 @@ function toPercent(value) {
   return Math.max(0, Math.min(100, p));
 }
 
-function bigBarHTML({ axisName, leftLabel, rightLabel, percent, tier, valueDisplay, explanationPlaceholder }) {
+function bigBarHTML({ axisName, leftLabel, rightLabel, percent, tier, valueDisplay, explanationPlaceholder, barColorVar }) {
   return `
     <div class="ibar-row">
       <div class="ibar-tier">${axisName}：${tier}<span class="ibar-tier-value">(${valueDisplay})</span></div>
       <div class="ibar-track big">
-        <div class="ibar-fill-left" style="width:${percent}%"></div>
-        <div class="ibar-fill-right" style="width:${100 - percent}%"></div>
-        <div class="ibar-marker" style="left:${percent}%"></div>
+        <div class="ibar-fill-single" style="width:${percent}%; background:var(${barColorVar})"></div>
       </div>
       <div class="ibar-endlabels"><span>${leftLabel}</span><span>${rightLabel}</span></div>
       <p class="ibar-explanation placeholder">${explanationPlaceholder}</p>
@@ -307,12 +305,12 @@ function bigBarHTML({ axisName, leftLabel, rightLabel, percent, tier, valueDispl
   `;
 }
 
-function smallBarHTML({ label, percent, valueDisplay, tier, leftLabel, rightLabel, explanationPlaceholder }) {
+function smallBarHTML({ label, percent, valueDisplay, tier, leftLabel, rightLabel, explanationPlaceholder, barColorVar }) {
   return `
     <div class="ibar-row small">
       <div class="ibar-small-header"><span>${label}</span><strong>${tier}<span class="ibar-tier-value">(${valueDisplay})</span></strong></div>
       <div class="ibar-track small">
-        <div class="ibar-fill-single" style="width:${percent}%"></div>
+        <div class="ibar-fill-single" style="width:${percent}%; background:var(${barColorVar})"></div>
       </div>
       <div class="ibar-endlabels"><span>${leftLabel}</span><span>${rightLabel}</span></div>
       <p class="ibar-explanation placeholder">${explanationPlaceholder}</p>
@@ -346,12 +344,14 @@ function renderIdeologyPanel() {
       leftLabel: "平等", rightLabel: "市場",
       percent: econPercent, tier: econTier, valueDisplay: scores.equality,
       explanationPlaceholder: ECONOMIC_EXPLANATIONS[econTier] || "",
+      barColorVar: "--bar-equality",
     })}
     ${bigBarHTML({
       axisName: "社會",
       leftLabel: "威權", rightLabel: "自由",
       percent: polityPercent, tier: polityTier, valueDisplay: scores.liberty,
       explanationPlaceholder: SOCIAL_EXPLANATION_FIXED,
+      barColorVar: "--bar-liberty",
     })}
 
     <div class="ibar-small-group">
@@ -359,11 +359,13 @@ function renderIdeologyPanel() {
         label: "政治體制", percent: toPercent(scores.democracy), valueDisplay: scores.democracy,
         tier: democracyLabel(scores.democracy), leftLabel: "威權", rightLabel: "民主",
         explanationPlaceholder: DEMOCRACY_EXPLANATIONS[democracyLabel(scores.democracy)] || "",
+        barColorVar: "--bar-democracy",
       })}
       ${smallBarHTML({
         label: "個人選擇", percent: toPercent(scores.individual), valueDisplay: scores.individual,
         tier: individualLabel(scores.individual), leftLabel: "傳統", rightLabel: "進步",
         explanationPlaceholder: INDIVIDUAL_EXPLANATIONS[individualLabel(scores.individual)] || "",
+        barColorVar: "--bar-individual",
       })}
     </div>
 
