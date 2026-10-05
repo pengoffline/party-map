@@ -704,6 +704,76 @@ svg.chart {
 }
 
 /* ============================================================
+   卡片右上角的「摺紙角」裝飾(dog-ear)
+   視覺上像紙張右上角被往後摺起一角,露出底下的頁面底色,
+   呼應全站「量表紙本」的視覺主題。做法是疊兩層只上色一邊的
+   border 三角形:外層(較大)用卡片邊框色當摺痕陰影,
+   內層(較小,同一角但邊長少 3px)用頁面底色 --paper 蓋在上面,
+   露出的那一小圈外層顏色就是摺痕的陰影線。
+   只套用在內容類卡片上,表格容器/彈出框/圖表本體不套用,
+   避免摺角蓋到表頭或圖表上的資料點。
+   ============================================================ */
+.intro-card, .content-card, .q-card, .notes-block, .chart-percentile {
+  position: relative;
+}
+.intro-card::before, .content-card::before, .q-card::before,
+.notes-block::before, .chart-percentile::before {
+  /* 摺痕陰影(較大的三角形,用卡片邊框色) */
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 22px 22px 0;
+  border-color: transparent var(--rule) transparent transparent;
+  pointer-events: none;
+}
+.intro-card::after, .content-card::after, .q-card::after,
+.notes-block::after, .chart-percentile::after {
+  /* 掀開後露出的紙面(較小的三角形,蓋在陰影三角形上面,用頁面底色) */
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 19px 19px 0;
+  border-color: transparent var(--paper) transparent transparent;
+  pointer-events: none;
+}
+
+/* 結果頁的意識形態卡片邊框比較粗、是整頁視覺重心,摺角做大一點、
+   陰影色改用 --ink 呼應它自己較粗的邊框顏色 */
+.ideology-panel { position: relative; }
+.ideology-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 28px 28px 0;
+  border-color: transparent var(--ink) transparent transparent;
+  pointer-events: none;
+}
+.ideology-panel::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 25px 25px 0;
+  border-color: transparent var(--paper) transparent transparent;
+  pointer-events: none;
+}
+
+/* ============================================================
    內部連結(站內頁面互相連結用,例如 index.html ↔ data-tables.html
    之間的「查看完整資料表格」「回到測驗」等連結)
    ============================================================ */
@@ -744,4 +814,16 @@ svg.chart {
   .score-grid { grid-template-columns: repeat(2, 1fr); }
   .scale-row { gap: 4px; }
   .scale-btn { font-size: 11px; }
+
+  /* 手機螢幕較窄,摺紙角縮小一點,避免視覺上太搶眼 */
+  .intro-card::before, .content-card::before, .q-card::before,
+  .notes-block::before, .chart-percentile::before {
+    border-width: 0 16px 16px 0;
+  }
+  .intro-card::after, .content-card::after, .q-card::after,
+  .notes-block::after, .chart-percentile::after {
+    border-width: 0 13px 13px 0;
+  }
+  .ideology-panel::before { border-width: 0 20px 20px 0; }
+  .ideology-panel::after { border-width: 0 17px 17px 0; }
 }
