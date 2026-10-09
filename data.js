@@ -32,7 +32,7 @@ export const PARTIES = [
   { country: "HK", party: "民主黨", equality: 5.25, liberty: 5.95, democracy: 7.54, individual: 4.36, year: 2020, n: 316 },
   { country: "AU", party: "自由黨", equality: 4.4, liberty: 6.59, democracy: 6.93, individual: 6.26, year: 2018, n: 651 },
   { country: "US", party: "共和黨", equality: 3.75, liberty: 5.6, democracy: 6.79, individual: 4.42, year: 2017, n: 829 },
-  { country: "NI", party: "民主統一黨", equality: 4.61, liberty: 5.47, democracy: 6.58, individual: 4.35, year: 2022, n: 56 },
+  { country: "NI", party: "民主聯合黨", equality: 4.61, liberty: 5.47, democracy: 6.58, individual: 4.35, year: 2022, n: 56 },
   { country: "TW", party: "民進黨", equality: 5.31, liberty: 5.44, democracy: 6.87, individual: 4.01, year: 2019, n: 251 },
   { country: "RU", party: "自民黨", equality: 6.19, liberty: 5.43, democracy: 6.39, individual: 4.47, year: 2017, n: 154 },
   { country: "KR", party: "共同民主黨", equality: 5.78, liberty: 5.43, democracy: 7.15, individual: 3.71, year: 2018, n: 533 },
