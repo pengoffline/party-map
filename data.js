@@ -1,6 +1,4 @@
-// ============================================================
-// 政黨座標資料(來自世界政黨大圖工作簿,靜態背景點)
-// ============================================================
+// 政黨座標資料
 export const PARTIES = [
   { country: "GE", party: "綠黨", equality: 6.1, liberty: 7.94, democracy: 8.64, individual: 7.25, year: 2018, n: 194 },
   { country: "GE", party: "左翼黨", equality: 6.49, liberty: 7.92, democracy: 8.7, individual: 7.14, year: 2018, n: 117 },
@@ -46,15 +44,7 @@ export const PARTIES = [
   { country: "MY", party: "和諧陣線", equality: 5.0, liberty: 4.43, democracy: 5.47, individual: 3.39, year: 2018, n: 155 },
 ];
 
-// ============================================================
-// 國家層級參考點(佔位測試資料:目前用各國政黨的樣本數加權平均計算,
-// 之後有真實的國家調查數字,直接把對應國家那行換掉即可)
-// ============================================================
-// 國家層級參考點(來自世界價值觀調查工作簿「國家」工作表,不顯示樣本數)
-// ============================================================
-// ============================================================
-// 國家層級參考點(來自世界價值觀調查工作簿「國家」工作表,不顯示樣本數)
-// ============================================================
+// 國家座標資料
 export const COUNTRIES = [
   { country: "NL", equality: 5.59, liberty: 7.66, democracy: 7.81, individual: 7.51 },
   { country: "GE", equality: 5.84, liberty: 7.28, democracy: 8.29, individual: 6.26 },
@@ -76,27 +66,23 @@ export const COUNTRIES = [
   { country: "KE", equality: 4.8, liberty: 4.8, democracy: 5.95, individual: 3.65 },
 ];
 
-
-// ============================================================
 // 題目與計分邏輯
-// ------------------------------------------------------------
 // 4 個維度: equality(平等) / democracy(民主) / individual(個人) / liberty(自由,由 democracy+individual 平均得出,不直接出題)
 // scale: "pair10"(1-10 兩極敘述) | "importance10"(1-10 重要性) | "agree4"(1-4 同意度,換算後反向) | "justify10"(1-10 正當性)
 // reverse: true 表示原始題義方向與維度分數方向相反,計分時需做 11-x
-// ============================================================
 
 export const QUESTIONS = [
   // ---- 組一:平等(1-10, 兩極敘述, 5題) ----
-  { id: "e1", group: 1, scale: "pair10", dimension: "equality", reverse: false,
-    left: "收入差距應擴大以鼓勵個人努力", right: "收入應盡可能平等" },
+  { id: "e1", group: 1, scale: "pair10", dimension: "equality", reverse: true,
+    left: "收入應盡可能平等", right: "收入差距應擴大以鼓勵個人努力" },
   { id: "e2", group: 1, scale: "pair10", dimension: "equality", reverse: false,
     left: "個人應該承擔更多責任來養活自己", right: "國家應該承擔更多責任來照顧每個人的生活" },
   { id: "e3", group: 1, scale: "pair10", dimension: "equality", reverse: false,
     left: "私營企業應擴大", right: "公營企業應擴大" },
   { id: "e4", group: 1, scale: "pair10", dimension: "equality", reverse: false,
     left: "競爭是好的", right: "競爭是有害的" },
-  { id: "e5", group: 1, scale: "pair10", dimension: "equality", reverse: false,
-    left: "長期而言，努力工作通常會帶來較好的生活", right: "努力工作通常不會帶來成功，更重要的是運氣和人際關係" },
+  { id: "e5", group: 1, scale: "pair10", dimension: "equality", reverse: true,
+    left: "努力工作通常不會帶來成功，更重要的是運氣和人際關係", right: "長期而言，努力工作通常會帶來較好的生活" },
 
   // ---- 組二:重要性(1-10, 8題) ----
   { id: "i1", group: 2, scale: "importance10", dimension: "equality", reverse: false,
@@ -180,9 +166,7 @@ export function computeScores(answers) {
   };
 }
 
-// ============================================================
-// 國家代碼 → 中文
-// ============================================================
+// 國家代碼
 export const COUNTRY_NAME_ZH = {
   TW: "台灣", GE: "德國", RU: "俄羅斯", JP: "日本", GB: "英國",
   CA: "加拿大", US: "美國", HK: "香港", AU: "澳洲", KR: "韓國", MY: "馬來西亞",
@@ -190,9 +174,7 @@ export const COUNTRY_NAME_ZH = {
   VN: "越南", KE: "肯亞",
 };
 
-// ============================================================
-// 找出座標最接近的政黨(只看「平等 x 自由」兩維歐氏距離)
-// ============================================================
+// 找出座標最接近的政黨(只看「平等 x 自由」兩維距離)
 export function findNearestParty(scores) {
   const dims = ["equality", "liberty"];
   let best = null;
@@ -212,45 +194,44 @@ export function findNearestParty(scores) {
   return { party: best, distance: Math.round(bestDist * 100) / 100 };
 }
 
-// ============================================================
 // 分數 → 光譜評語
-// ============================================================
+// 經濟
 export function economicLabel(v) {
-  if (v <= 3.0) return "極右";
-  if (v <= 4.0) return "右翼";
-  if (v <= 5.0) return "中間偏右";
-  if (v <= 5.9) return "中間";
-  if (v <= 6.9) return "中間偏左";
-  if (v <= 7.9) return "左翼";
-  return "極左";
+  if (v <=2.50) return "放任";
+  if (v <=3.75) return "資本";
+  if (v <=5.00) return "規範";
+  if (v < 6.00) return "中間";
+  if (v < 7.25) return "改良";
+  if (v < 8.50) return "社會";
+  return "共產";
 }
 
-// 「政治體制」(自由分數,即民主+個人平均),區間結構與經濟軸相同
+// 「政治體制」(自由分數,即民主+個人平均),
 export function politicalSystemLabel(v) {
-  if (v <= 3.0) return "極權";
-  if (v <= 4.0) return "威權";
-  if (v <= 5.0) return "偏向威權";
-  if (v <= 5.9) return "中間";
-  if (v <= 6.9) return "偏向自由";
-  if (v <= 7.9) return "自由";
+  if (v <= 2.50) return "極權";
+  if (v <= 4.00) return "威權";
+  if (v <= 5.50) return "偏向威權";
+  if (v <  6.50) return "中間";
+  if (v <  7.50) return "偏向自由";
+  if (v <  8.50) return "自由";
   return "自由意志";
 }
 
 // 「政治自由」(民主分數)
 export function democracyLabel(v) {
-  if (v <= 3.0) return "極權";
-  if (v <= 5.0) return "威權";
-  if (v <= 6.4) return "混合";
-  if (v <= 7.9) return "有限民主";
+  if (v < 3.00) return "極權";
+  if (v < 5.00) return "威權";
+  if (v < 6.50) return "混合";
+  if (v < 8.00) return "有限民主";
   return "完全民主";
 }
 
 // 「個人選擇」(個人分數)
 export function individualLabel(v) {
-  if (v <= 3.0) return "反動";
-  if (v <= 4.5) return "傳統";
-  if (v <= 5.9) return "中立";
-  if (v <= 7.9) return "進步";
+  if (v < 3.00) return "反動";
+  if (v < 4.50) return "傳統";
+  if (v < 6.50) return "中立";
+  if (v < 8.00) return "進步";
   return "基進";
 }
 
@@ -265,43 +246,38 @@ export function getTierLabel(dimension, v) {
   }
 }
 
-// ============================================================
 // 各評語段落的說明文字(佔位文字,請自行逐條填寫)
 // 「社會」軸不隨結果變化,只有一段固定文字,不放在這個對照表裡
-// ============================================================
 export const ECONOMIC_EXPLANATIONS = {
-  "極左": "（請在此填寫「極左」的說明文字）",
-  "左翼": "（請在此填寫「左翼」的說明文字）",
-  "中間偏左": "（請在此填寫「中間偏左」的說明文字）",
-  "中間": "（請在此填寫「中間」的說明文字）",
-  "中間偏右": "（請在此填寫「中間偏右」的說明文字）",
-  "右翼": "（請在此填寫「右翼」的說明文字）",
-  "極右": "（請在此填寫「極右」的說明文字）",
+  "共產": "共產主義強調平等和公有制，一般反對私有財產和自由市場",
+  "社會": "經濟左翼包含各種社會主義，通常主張部份生產資料公有和政府介入",
+  "改良": "中左翼涵蓋社會民主主義等，主張透過收入再分配等方式改良市場經濟的缺陷",
+  "中間": "中間派支持市場經濟，但也支持政府補助的重要性",
+  "規範": "中右翼通常有以個人努力為中心的價值觀，支持有限的福利",
+  "資本": "右翼的資本主義強調個人責任和自由競爭，反對政府介入市場經濟",
+  "放任": "放任思想認為私有財產絕不可侵犯，同時強烈維護經濟階級的存在",
 };
 
 export const DEMOCRACY_EXPLANATIONS = {
-  "極權": "（請在此填寫「極權」的說明文字）",
-  "威權": "（請在此填寫「威權」的說明文字）",
-  "混合": "（請在此填寫「混合」的說明文字）",
-  "有限民主": "（請在此填寫「有限民主」的說明文字）",
-  "完全民主": "（請在此填寫「完全民主」的說明文字）",
+  "極權": "幾乎沒有選舉，專制政府透過大規模監視使人民服從",
+  "威權": "政治權利受強人或軍隊控制，人民則擁有一些基本人身自由",
+  "混合": "擁有選舉，但可能因為缺乏完善的法律或民粹原因使民主未完全落實",
+  "有限民主": "擁有選舉和公民權利，同時亦強調秩序和政府權力",
+  "完全民主": "法治與公民權利完善，政府監控的權力被嚴格限制",
 };
 
 export const INDIVIDUAL_EXPLANATIONS = {
-  "反動": "（請在此填寫「反動」的說明文字）",
-  "傳統": "（請在此填寫「傳統」的說明文字）",
-  "中立": "（請在此填寫「中立」的說明文字）",
-  "進步": "（請在此填寫「進步」的說明文字）",
-  "基進": "（請在此填寫「基進」的說明文字）",
+  "反動": "主張回到過去的價值觀並反對個人自由",
+  "傳統": "強調集體和家庭價值觀的傳承",
+  "中立": "通常不對個人行為作出明確的價值判斷",
+  "進步": "在性與家庭上擁有更開放的立場",
+  "基進": "傾向高度個人自主或自我所有權概念",
 };
 
 // 「社會」軸固定不變的說明文字(不隨結果改變)
-export const SOCIAL_EXPLANATION_FIXED = "（請自行填寫此軸固定不變的說明文字）";
+export const SOCIAL_EXPLANATION_FIXED = "社會分數是政治體制和個人選擇的平均";
 
-// ============================================================
-// 人口統計題(第 27-29 題,不計入平等/自由/民主/個人分數計算,
-// 只在使用者按「儲存我的結果」時一併存進 Supabase,不在網站上顯示)
-// ============================================================
+// 人口統計題 第 27-29 題
 export const DEMOGRAPHIC_QUESTIONS = [
   {
     id: "self_lr",
@@ -321,7 +297,7 @@ export const DEMOGRAPHIC_QUESTIONS = [
   {
     id: "party_support",
     kind: "conditionalChoice",
-    // 只有居住地選「台灣」或「香港」才會出現這一題,選項也依居住地不同
+    // 只有居住地選「台灣」或「香港」才會出現這一題
     dependsOn: "residence",
     stemByValue: {
       "台灣": "你較支持以下哪個黨派？",
@@ -337,7 +313,6 @@ export const DEMOGRAPHIC_QUESTIONS = [
     id: "age",
     kind: "choice",
     stem: "你現在幾歲？",
-    // 「30-39歲」與「50-59歲」之間依等差補上「40-49歲」
     options: ["19歲以下", "20-29歲", "30-39歲", "40-49歲", "50-59歲", "60歲以上", "不願透露"],
     note: "這個題目不會影響分析結果",
   },
