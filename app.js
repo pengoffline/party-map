@@ -331,8 +331,8 @@ function renderIdeologyPanel() {
   const econTier = economicLabel(scores.equality);
   const polityTier = politicalSystemLabel(scores.liberty);
 
-  // 經濟軸:平等分數越高越「左」,所以左端點放高分那一側
-  const econPercent = 100 - toPercent(scores.equality);
+  // 經濟軸:市場放左端、平等放右端,平等分數越高,進度條(從左往右填色)越長
+  const econPercent = toPercent(scores.equality);
   // 社會軸:自由分數越高越靠「自由意志」端(放右側)
   const polityPercent = toPercent(scores.liberty);
 
@@ -341,7 +341,7 @@ function renderIdeologyPanel() {
 
     ${bigBarHTML({
       axisName: "經濟",
-      leftLabel: "平等", rightLabel: "市場",
+      leftLabel: "市場", rightLabel: "平等",
       percent: econPercent, tier: econTier, valueDisplay: scores.equality,
       explanationPlaceholder: ECONOMIC_EXPLANATIONS[econTier] || "",
       barColorVar: "--bar-equality",
