@@ -1,43 +1,27 @@
-/* ============================================================
-   政治價值測驗 — 全站樣式表
-   ------------------------------------------------------------
-   視覺風格:「量表紙本 / 方格紙」——米杏底 + 方格背景,墨藍文字,
-   標題用襯線字(像正式文件/選票),數據用等寬字(像儀表數字)。
-
-   共用給多個頁面:index.html(測驗+結果)、data-tables.html(總表)、
-   blank-template.html(擴充頁面範本)都引用這一份檔案。
-
-   四個維度各自有專屬顏色,全站統一,新增樣式時盡量沿用這套顏色語意:
-     --c-equality   平等 / 經濟軸       (琥珀)
-     --c-liberty    自由 / 社會軸       (靛藍)
-     --c-democracy  民主 / 政治體制軸   (磚紅)
-     --c-individual 個人 / 個人選擇軸   (墨綠)
-   ============================================================ */
-
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap');
 
 /* ---------- 全域顏色 / 字體變數 ---------- */
 :root {
-  --paper: #EDEAE9;       /* 頁面底色(米杏方格紙) */
+  --paper: #cfcdc9;       /* 頁面底色(米杏方格紙) */
   --paper-line: #D8D3CF;  /* 方格紙格線顏色 */
   --ink: #1B2430;         /* 主要文字/邊框顏色(墨藍) */
   --ink-soft: #5B6470;    /* 次要文字顏色(較淡的墨藍灰) */
   --rule: #B9B2AA;        /* 一般分隔線/邊框顏色(卡片邊框、表格格線等) */
 
   /* 四個維度的識別色,全站統一使用,不要另外開新顏色 */
-  --c-equality: #B4791F;   /* 琥珀 — 平等 / 經濟軸 */
-  --c-liberty: #3B5BA5;    /* 靛藍 — 自由 / 社會軸 */
-  --c-democracy: #A63D40;  /* 磚紅 — 民主 / 政治體制軸(也拿來當「你的點」跟強調色用) */
-  --c-individual: #3F6C51; /* 墨綠 — 個人 / 個人選擇軸 */
+  --c-equality: #FF7575;   /* 黃 — 平等 / 經濟軸 */
+  --c-liberty: #3B5BA5;    /* 藍 — 自由 / 社會軸 */
+  --c-democracy: #A63D40;  /* 黃 — 民主 / 政治體制軸(也拿來當「你的點」跟強調色用) */
+  --c-individual: #9AED97; /* 綠 — 個人 / 個人選擇軸 */
 
-  --card: #F5F3F0;   /* 卡片/區塊背景色(比頁面底色稍亮的米色) */
+  --card: #f4f3f1;   /* 卡片/區塊背景色(比頁面底色稍亮的米色) */
   --focus: #1B2430;  /* 目前未實際使用,保留給未來 focus 樣式擴充 */
 
   /* 結果頁四條進度條專用的粉彩填色(與上面文字/圖表用的深色識別色分開管理) */
-  --bar-equality: #BB8C8C;   /* 平等 / 經濟軸 */
-  --bar-liberty: #96AB8D;    /* 自由 / 社會軸 */
-  --bar-democracy: #B8B87D;  /* 民主 / 政治體制軸 */
-  --bar-individual: #6EA3BA; /* 個人 / 個人選擇軸 */
+  --bar-equality: #FF7575;   /* 紅色 / 經濟軸 */
+  --bar-liberty: #9AED97;    /* 綠色 / 社會軸 */
+  --bar-democracy: #F5F471;  /* 黃色 / 政治體制軸 */
+  --bar-individual: #42AAFF; /* 藍色 / 個人選擇軸 */
 }
 
 /* ---------- 基本重置 / 版面 ---------- */
@@ -66,10 +50,8 @@ body {
   padding: 48px 20px 96px;
 }
 
-/* ============================================================
-   頁首大標題區(masthead)
-   用在每個頁面最上方:小標籤 + 大標題 + 一段說明文字
-   ============================================================ */
+/* 頁首大標題區(masthead)
+   用在每個頁面最上方:小標籤 + 大標題 + 一段說明文字*/
 .masthead {
   border-bottom: 2px solid var(--ink);
   padding-bottom: 18px;
@@ -269,10 +251,10 @@ section:first-of-type .section-heading { margin-top: 0; }
 }
 
 .q-item {
-  /* 個別題目的具體敘述文字(例如某一條政策的名稱),字級比題幹小、用粗體無襯線字 */
-  font-family: 'Noto Sans TC', sans-serif;
+  /* 個別題目的具體敘述文字(例如某一條政策的名稱) */
+  font-family: 'Noto Serif TC', serif;
   font-weight: 700;
-  font-size: 16px;
+  font-size: 18px;
   color: var(--ink);
   margin: 0 0 24px;
 }
@@ -281,9 +263,9 @@ section:first-of-type .section-heading { margin-top: 0; }
   /* 兩極敘述題(pair10)專用:左右各顯示一句相對的敘述 */
   display: flex;
   justify-content: space-between;
-  font-family: 'Noto Sans TC', sans-serif;
+  font-family: 'Noto Serif TC', serif;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 18px;
   color: var(--ink);
   gap: 16px;
   margin-bottom: 24px;
@@ -325,7 +307,9 @@ section:first-of-type .section-heading { margin-top: 0; }
   /* 數字方格下方兩端的文字說明,例如「從不正當」/「總是正當」 */
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 500
+  font-size: 14px;
   color: var(--ink-soft);
   margin-top: 8px;
 }
