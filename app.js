@@ -365,7 +365,7 @@ function renderIdeologyPanel() {
   const polityPercent = toPercent(scores.liberty);
 
   document.getElementById("ideology-panel").innerHTML = `
-    <h3 class="notes-title">World Party Map</h3>
+    <h3 class="notes-title">世界政黨地圖測驗</h3>
     <p class="match-sentence">${matchSentence}</p>
 
     ${bigBarHTML({
