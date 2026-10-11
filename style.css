@@ -1,25 +1,10 @@
-/* ============================================================
-   政治價值測驗 — 全站樣式表
-   ------------------------------------------------------------
-   視覺風格:「量表紙本 / 方格紙」——米杏底 + 方格背景,墨藍文字,
-   標題用襯線字(像正式文件/選票),數據用等寬字(像儀表數字)。
-
-   共用給多個頁面:index.html(測驗+結果)、data-tables.html(總表)、
-   blank-template.html(擴充頁面範本)都引用這一份檔案。
-
-   四個維度各自有專屬顏色,全站統一,新增樣式時盡量沿用這套顏色語意:
-     --c-equality   平等 / 經濟軸
-     --c-liberty    自由 / 社會軸
-     --c-democracy  民主 / 政治體制軸
-     --c-individual 個人 / 個人選擇軸
-   ============================================================ */
-
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap');
 
 /* ---------- 全域顏色 / 字體變數 ---------- */
 :root {
-  --paper: #cfcdc9;       /* 頁面底色(米杏方格紙) */
-  --paper-line: #D8D3CF;  /* 方格紙格線顏色 */
+  --paper: #d3d2cf;       /* 頁面底色 灰色 */
+  --card: #ecebea;   /* 卡片/區塊背景色 白色 */
+  --paper-line: #D8D3CF;  /* 格線顏色 */
   --ink: #1B2430;         /* 主要文字/邊框顏色(墨藍) */
   --ink-soft: #5B6470;    /* 次要文字顏色(較淡的墨藍灰) */
   --rule: #B9B2AA;        /* 一般分隔線/邊框顏色(卡片邊框、表格格線等) */
@@ -29,15 +14,13 @@
   --c-liberty: #3B5BA5;    /* 藍 — 自由 / 社會軸 */
   --c-democracy: #A63D40;  /* 黃 — 民主 / 政治體制軸(也拿來當「你的點」跟強調色用) */
   --c-individual: #9AED97; /* 綠 — 個人 / 個人選擇軸 */
-
-  --card: #f4f3f1;   /* 卡片/區塊背景色(比頁面底色稍亮的米色) */
   --focus: #1B2430;  /* 目前未實際使用,保留給未來 focus 樣式擴充 */
 
   /* 結果頁四條進度條專用的粉彩填色(與上面文字/圖表用的深色識別色分開管理) */
-  --bar-equality: #FF7575;   /* 紅色 / 經濟軸 */
-  --bar-liberty: #9AED97;    /* 綠色 / 社會軸 */
-  --bar-democracy: #F5F471;  /* 黃色 / 政治體制軸 */
-  --bar-individual: #42AAFF; /* 藍色 / 個人選擇軸 */
+  --bar-equality: #d46868;   /* 紅色 / 經濟軸 */
+  --bar-liberty: #61c75d;    /* 綠色 / 社會軸 */
+  --bar-democracy: #d6d563;  /* 黃色 / 政治體制軸 */
+  --bar-individual: #3f94d9; /* 藍色 / 個人選擇軸 */
 }
 
 /* ---------- 基本重置 / 版面 ---------- */
@@ -134,7 +117,7 @@ section:first-of-type .section-heading { margin-top: 0; }
   padding-left: 20px;
   margin: 16px 0;
 }
-.content-card li { margin-bottom: 6px; }
+.content-card li { margin-bottom: 5px; }
 .content-card p:first-child { margin-top: 0; }
 .content-card p:last-child { margin-bottom: 0; }
 
@@ -269,7 +252,7 @@ section:first-of-type .section-heading { margin-top: 0; }
 .q-item {
   /* 個別題目的具體敘述文字(例如某一條政策的名稱) */
   font-family: 'Noto Serif TC', serif;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 18px;
   color: var(--ink);
   margin: 0 0 24px;
@@ -280,8 +263,8 @@ section:first-of-type .section-heading { margin-top: 0; }
   display: flex;
   justify-content: space-between;
   font-family: 'Noto Serif TC', serif;
-  font-weight: 700;
-  font-size: 18px;
+  font-weight: 600;
+  font-size: 17px;
   color: var(--ink);
   gap: 16px;
   margin-bottom: 24px;
@@ -439,6 +422,8 @@ section:first-of-type .section-heading { margin-top: 0; }
 
 .ibar-small-group {
   /* 政治體制 + 個人選擇這兩條小進度條的並排容器 */
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 700;
   margin-top: 16px;
   padding-top: 14px;
   display: grid;
@@ -710,9 +695,9 @@ svg.chart {
    ============================================================ */
 .notes-title {
   /* 方框上部的標題,呼應 .chart-title 的襯線粗體風格 */
-  font-family: 'Noto Serif TC', serif;
-  font-weight: 700;
-  font-size: 18px;
+  font-family: 'Noto Sans TC', serif;
+  font-weight: 600;
+  font-size: 16px;
   margin: 0 0 10px;
   text-align: center;
 }
@@ -785,14 +770,14 @@ svg.chart {
    之間的「查看完整資料表格」「回到測驗」等連結)
    ============================================================ */
 .internal-link {
-  color: var(--ink);
+  color: #3576cc;
   text-decoration: none;
-  border-bottom: 1px solid var(--ink);
+  border-bottom: 1px solid #3576cc;
   padding-bottom: 1px;
   font-weight: 500;
   transition: color 0.15s ease, border-color 0.15s ease;
 }
-.internal-link:visited { color: var(--ink); }
+.internal-link:visited { color: #3576cc; }
 .internal-link:hover,
 .internal-link:focus-visible {
   color: var(--c-democracy);
