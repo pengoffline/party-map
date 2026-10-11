@@ -282,7 +282,6 @@ async function finishQuiz() {
   scores = computeScores(answers);
   showScreen("result");
   renderIdeologyPanel();
-  renderWorldPartyMap();
   await saveResult();
   await refreshHistoryAndDraw();
 }
@@ -319,6 +318,27 @@ function smallBarHTML({ label, percent, valueDisplay, tier, leftLabel, rightLabe
   `;
 }
 
+// World Party Map 三行「經濟/政治/個人最接近」:依單一維度分數的絕對差距
+// 各自獨立找出最接近的政黨(見 data.js findNearestPartyByDimension()),
+// 跟下面 2D(平等x自由)距離算出的 matchSentence 政黨是不同的配對,不一定相同
+function worldPartyMapRowsHTML() {
+  const dims = [
+    { label: "經濟最接近", dim: "equality" },
+    { label: "政治最接近", dim: "democracy" },
+    { label: "個人最接近", dim: "individual" },
+  ];
+  return dims.map(({ label, dim }) => {
+    const { party } = findNearestPartyByDimension(scores, dim);
+    const countryZh = COUNTRY_NAME_ZH[party.country] || party.country;
+    return `
+      <div class="notes-match-row">
+        <span class="notes-match-label">${label}</span>
+        <span class="notes-match-value"><strong>${countryZh} ${party.party}</strong></span>
+      </div>
+    `;
+  }).join("");
+}
+
 function renderIdeologyPanel() {
   const { party, distance } = findNearestParty(scores);
   let matchSentence;
@@ -338,6 +358,7 @@ function renderIdeologyPanel() {
   const polityPercent = toPercent(scores.liberty);
 
   document.getElementById("ideology-panel").innerHTML = `
+    <h3 class="notes-title">World Party Map</h3>
     <p class="match-sentence">${matchSentence}</p>
 
     ${bigBarHTML({
@@ -370,32 +391,10 @@ function renderIdeologyPanel() {
       })}
     </div>
 
-    <div class="ibar-overall-note placeholder">
-      （這裡放不會隨結果改變的總體說明文字,例如整份測驗的計分邏輯或四個維度的關係,請自行填寫）
+    <div class="ibar-overall-note">
+      ${worldPartyMapRowsHTML()}
     </div>
   `;
-}
-
-// World Party Map:依「經濟(平等)/政治(民主)/個人」三個維度,
-// 各自單獨找出分數最接近的政黨(見 data.js findNearestPartyByDimension()),
-// 跟 renderIdeologyPanel() 裡「平等x自由」2D 距離算出的最接近政黨是不同的配對
-function renderWorldPartyMap() {
-  const dims = [
-    { label: "經濟最接近", dim: "equality" },
-    { label: "政治最接近", dim: "democracy" },
-    { label: "個人最接近", dim: "individual" },
-  ];
-  const rowsHTML = dims.map(({ label, dim }) => {
-    const { party } = findNearestPartyByDimension(scores, dim);
-    const countryZh = COUNTRY_NAME_ZH[party.country] || party.country;
-    return `
-      <div class="notes-match-row">
-        <span class="notes-match-label">${label}</span>
-        <span class="notes-match-value"><strong>${countryZh} ${party.party}</strong></span>
-      </div>
-    `;
-  }).join("");
-  document.getElementById("world-party-map").innerHTML = rowsHTML;
 }
 
 // ---------------------------------------------------------------
