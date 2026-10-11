@@ -3,18 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>完整資料表 — 政治價值測驗</title>
+<title>世界政黨地圖 · 政黨與國家總表</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="wrap">
 
   <header class="masthead">
-    <div class="eyebrow">DATA TABLES · 完整資料表</div>
+    <div class="eyebrow">DATA TABLES</div>
     <h1>政黨與國家總表</h1>
-    <p>點欄位標題可依該面向的分數升冪/降冪排序。分數旁的文字是依區間換算出的評語,跟座標圖上彈出框顯示的邏輯一致。</p>
+    <p><a href="https://pengoffline.github.io/party-map/" class="internal-link">回首頁</a></p>
   </header>
 
+  <p>點擊欄位標題可依該面向的分數升冪/降冪排序</p>
   <section>
     <h2 class="section-heading">政黨總表</h2>
     <div class="table-scroll">
@@ -24,9 +25,9 @@
             <th data-key="country" class="sortable">國家</th>
             <th data-key="party" class="sortable">政黨</th>
             <th data-key="year" class="sortable">年份</th>
-            <th data-key="n" class="sortable">樣本數</th>
-            <th data-key="equality" class="sortable">平等</th>
-            <th data-key="liberty" class="sortable">自由</th>
+            <th data-key="n" class="sortable">N</th>
+            <th data-key="equality" class="sortable">經濟</th>
+            <th data-key="liberty" class="sortable">社會</th>
             <th data-key="democracy" class="sortable">政治體制</th>
             <th data-key="individual" class="sortable">個人選擇</th>
           </tr>
@@ -43,8 +44,8 @@
         <thead>
           <tr>
             <th data-key="country" class="sortable">國家</th>
-            <th data-key="equality" class="sortable">平等</th>
-            <th data-key="liberty" class="sortable">自由</th>
+            <th data-key="equality" class="sortable">經濟</th>
+            <th data-key="liberty" class="sortable">社會</th>
             <th data-key="democracy" class="sortable">政治體制</th>
             <th data-key="individual" class="sortable">個人選擇</th>
           </tr>
@@ -54,8 +55,17 @@
     </div>
   </section>
 
+<section>
+  <h2 class="section-heading">政治羅盤</h2>
+    <img src="https://pengoffline.github.io/party-map/pictures/world_party.png" style="width: 100%; height: auto;">
+    <p>中心點設為經濟5.5，社會6.5</p>
+</section>
+  
   <div class="footer-note">
-    分數評語區間跟座標圖、結果頁使用同一套換算邏輯(見 data.js)。國家總表不顯示樣本數。
+    Party Values Map by <a href="https://linktr.ee/penguin.offline" class="internal-link"><b>離線企鵝</b></a>（浣熊 on <a href="https://www.threads.com/@_321raccoon" class="internal-link">Threads</a>）<br>
+    CC BY-SA 4.0 · 2026.10 · beta 1.0<br>
+    <a href="https://github.com/pengoffline/party-map/tree/main" class="internal-link"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/GitHub_Invertocat_Logo.svg" width="20" height="20">GitHub Repo.</a>
+  </div>
   </div>
 </div>
 
