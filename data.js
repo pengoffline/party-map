@@ -194,6 +194,21 @@ export function findNearestParty(scores) {
   return { party: best, distance: Math.round(bestDist * 100) / 100 };
 }
 
+// 找出單一維度上最接近的政黨(只比較該維度分數的絕對差距),
+// 給 World Party Map 的「經濟最接近 / 政治最接近 / 個人最接近」使用
+export function findNearestPartyByDimension(scores, dim) {
+  let best = null;
+  let bestDist = Infinity;
+  for (const p of PARTIES) {
+    const dist = Math.abs(scores[dim] - p[dim]);
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = p;
+    }
+  }
+  return { party: best, distance: Math.round(bestDist * 100) / 100 };
+}
+
 // 分數 → 光譜評語
 // 經濟
 export function economicLabel(v) {
