@@ -328,12 +328,19 @@ function worldPartyMapRowsHTML() {
     { label: "個人最接近", dim: "individual" },
   ];
   return dims.map(({ label, dim }) => {
-    const { party } = findNearestPartyByDimension(scores, dim);
-    const countryZh = COUNTRY_NAME_ZH[party.country] || party.country;
+    const { party, distance } = findNearestPartyByDimension(scores, dim);
+    // 比照最上面的最接近政黨:距離超過 1.5 就不顯示配對,改顯示「無」
+    let valueHTML;
+    if (distance <= 1.5) {
+      const countryZh = COUNTRY_NAME_ZH[party.country] || party.country;
+      valueHTML = `<strong>${countryZh} ${party.party}</strong>`;
+    } else {
+      valueHTML = "無";
+    }
     return `
       <div class="notes-match-row">
         <span class="notes-match-label">${label}</span>
-        <span class="notes-match-value"><strong>${countryZh} ${party.party}</strong></span>
+        <span class="notes-match-value">${valueHTML}</span>
       </div>
     `;
   }).join("");
