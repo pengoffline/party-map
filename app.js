@@ -665,7 +665,7 @@ async function refreshHistoryAndDraw() {
     }
   } catch (e) {
     // silently ignore — charts still work in "mine" mode
-    console.warn("無法讀取歷史結果", e);
+    console.warn("無法讀取歷史結果，請聯絡離線企鵝", e);
   }
 }
 
@@ -744,11 +744,11 @@ async function saveResult() {
       console.warn("原始作答儲存失敗(不影響主要結果)", e);
     }
 
-    statusMsg.textContent = "已自動儲存,感謝你的填答。";
+    statusMsg.textContent = "已儲存至資料庫，記得截圖保存以便分享結果";
     statusMsg.className = "status-msg ok";
   } catch (e) {
     console.error(e);
-    statusMsg.textContent = "儲存失敗,請確認 config.js 是否已填入你的 Supabase 專案資訊。";
+    statusMsg.textContent = "未儲存至資料庫，記得截圖保存以便分享結果";
     statusMsg.className = "status-msg err";
   }
 }
