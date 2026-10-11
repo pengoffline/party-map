@@ -1,3 +1,19 @@
+/* ============================================================
+   政治價值測驗 — 全站樣式表
+   ------------------------------------------------------------
+   視覺風格:「量表紙本 / 方格紙」——米杏底 + 方格背景,墨藍文字,
+   標題用襯線字(像正式文件/選票),數據用等寬字(像儀表數字)。
+
+   共用給多個頁面:index.html(測驗+結果)、data-tables.html(總表)、
+   blank-template.html(擴充頁面範本)都引用這一份檔案。
+
+   四個維度各自有專屬顏色,全站統一,新增樣式時盡量沿用這套顏色語意:
+     --c-equality   平等 / 經濟軸
+     --c-liberty    自由 / 社會軸
+     --c-democracy  民主 / 政治體制軸
+     --c-individual 個人 / 個人選擇軸
+   ============================================================ */
+
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap');
 
 /* ---------- 全域顏色 / 字體變數 ---------- */
@@ -308,7 +324,7 @@ section:first-of-type .section-heading { margin-top: 0; }
   display: flex;
   justify-content: space-between;
   font-family: 'Noto Sans TC', sans-serif;
-  font-weight: 500
+  font-weight: 500;
   font-size: 14px;
   color: var(--ink-soft);
   margin-top: 8px;
@@ -672,7 +688,9 @@ svg.chart {
 .dot-popover.arrow-top::after { top: -5px; }
 
 /* ============================================================
-   結果頁座標圖下方的白底文字區塊(使用者自行填寫補充說明用)
+   結果頁座標圖下方的白底文字區塊
+   目前放「World Party Map」:依「經濟/政治/個人」三個維度,
+   各自找出分數最接近的政黨(app.js renderWorldPartyMap())
    ============================================================ */
 .notes-block {
   background: #FFFFFF; /* 特意用純白,跟其他區塊的米色系(--card)做出區隔 */
@@ -685,6 +703,32 @@ svg.chart {
   color: var(--ink-soft);
   text-align: center;
   margin: 0;
+}
+.notes-title {
+  /* 方框上部的標題,呼應 .chart-title 的襯線粗體風格 */
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 700;
+  font-size: 18px;
+  margin: 0 0 16px;
+  text-align: center;
+}
+.notes-match-row {
+  /* 「經濟最接近:OO」這種一列一行的資訊 */
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14.5px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.notes-match-row:last-child { border-bottom: none; }
+.notes-match-row .notes-match-label {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.notes-match-row .notes-match-value strong {
+  color: var(--c-democracy);
 }
 
 /* ============================================================
