@@ -374,7 +374,7 @@ section:first-of-type .section-heading { margin-top: 0; }
 .ideology-panel {
   background: var(--card);
   border: 1.5px solid var(--ink); /* 邊框比其他卡片粗一點,強調這是結果頁的視覺重心 */
-  padding: 28px;
+  padding: 22px 28px;
   margin-bottom: 8px;
 }
 .match-sentence {
@@ -382,12 +382,12 @@ section:first-of-type .section-heading { margin-top: 0; }
   font-family: 'Noto Serif TC', serif;
   font-size: 20px;
   font-weight: 500;
-  margin: 0 0 26px;
+  margin: 0 0 16px;
   text-align: center;
 }
 .match-sentence strong { color: var(--c-democracy); } /* 政黨名稱用強調色標出來 */
 
-.ibar-row { margin-bottom: 22px; }
+.ibar-row { margin-bottom: 14px; }
 .ibar-row:last-child { margin-bottom: 0; }
 .ibar-tier {
   /* 大進度條上方的評語文字,例如「中間偏左」,格式是「評語(數值)」 */
@@ -439,8 +439,8 @@ section:first-of-type .section-heading { margin-top: 0; }
 
 .ibar-small-group {
   /* 政治體制 + 個人選擇這兩條小進度條的並排容器 */
-  margin-top: 26px;
-  padding-top: 20px;
+  margin-top: 16px;
+  padding-top: 14px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
@@ -454,13 +454,12 @@ section:first-of-type .section-heading { margin-top: 0; }
 .ibar-small-header strong { font-family: 'JetBrains Mono', monospace; }
 
 .ibar-overall-note {
-  /* 結果卡片最下方、不隨測驗結果改變的固定說明文字(佔位) */
-  margin-top: 24px;
-  padding-top: 18px;
+  /* 結果卡片最下方,放 World Party Map 的「經濟/政治/個人最接近」三行(.notes-match-row) */
+  margin-top: 14px;
+  padding-top: 8px;
   border-top: 1px solid var(--rule);
   font-size: 13px;
   line-height: 1.6;
-  text-align: center;
 }
 .ibar-overall-note.placeholder {
   color: var(--ink-soft);
@@ -688,9 +687,8 @@ svg.chart {
 .dot-popover.arrow-top::after { top: -5px; }
 
 /* ============================================================
-   結果頁座標圖下方的白底文字區塊
-   目前放「World Party Map」:依「經濟/政治/個人」三個維度,
-   各自找出分數最接近的政黨(app.js renderWorldPartyMap())
+   結果頁座標圖下方的白底文字區塊(目前 index.html 沒有用到,
+   保留供日後需要白底說明框時使用)
    ============================================================ */
 .notes-block {
   background: #FFFFFF; /* 特意用純白,跟其他區塊的米色系(--card)做出區隔 */
@@ -704,12 +702,18 @@ svg.chart {
   text-align: center;
   margin: 0;
 }
+
+/* ============================================================
+   意識形態卡片(.ideology-panel)最上方的「World Party Map」標題,
+   以及最下方「經濟/政治/個人最接近」三行政黨配對
+   (app.js renderIdeologyPanel() / worldPartyMapRowsHTML())
+   ============================================================ */
 .notes-title {
   /* 方框上部的標題,呼應 .chart-title 的襯線粗體風格 */
   font-family: 'Noto Serif TC', serif;
   font-weight: 700;
   font-size: 18px;
-  margin: 0 0 16px;
+  margin: 0 0 10px;
   text-align: center;
 }
 .notes-match-row {
@@ -718,7 +722,7 @@ svg.chart {
   justify-content: space-between;
   gap: 12px;
   font-size: 14.5px;
-  padding: 8px 0;
+  padding: 5px 0;
   border-bottom: 1px solid var(--rule);
 }
 .notes-match-row:last-child { border-bottom: none; }
@@ -773,33 +777,8 @@ svg.chart {
   pointer-events: none;
 }
 
-/* 結果頁的意識形態卡片邊框比較粗、是整頁視覺重心,摺角做大一點、
-   陰影色改用 --ink 呼應它自己較粗的邊框顏色 */
-.ideology-panel { position: relative; }
-.ideology-panel::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 0 28px 28px 0;
-  border-color: transparent var(--ink) transparent transparent;
-  pointer-events: none;
-}
-.ideology-panel::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 0 25px 25px 0;
-  border-color: transparent var(--paper) transparent transparent;
-  pointer-events: none;
-}
+/* 結果頁的意識形態卡片(.ideology-panel)不套用摺紙角效果,
+   避免蓋到卡片內的 World Party Map 標題或進度條內容 */
 
 /* ============================================================
    內部連結(站內頁面互相連結用,例如 index.html ↔ data-tables.html
@@ -852,6 +831,4 @@ svg.chart {
   .notes-block::after, .chart-percentile::after {
     border-width: 0 13px 13px 0;
   }
-  .ideology-panel::before { border-width: 0 20px 20px 0; }
-  .ideology-panel::after { border-width: 0 17px 17px 0; }
 }
