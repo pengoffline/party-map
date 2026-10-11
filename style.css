@@ -7,7 +7,7 @@
   --paper-line: #D8D3CF;  /* 格線顏色 */
   --ink: #1B2430;         /* 主要文字/邊框顏色(墨藍) */
   --ink-soft: #5B6470;    /* 次要文字顏色(較淡的墨藍灰) */
-  --rule: #B9B2AA;        /* 一般分隔線/邊框顏色(卡片邊框、表格格線等) */
+  --rule: #bdbab7;        /* 一般分隔線/邊框顏色(卡片邊框、表格格線等) */
 
   /* 四個維度的識別色,全站統一使用,不要另外開新顏色 */
   --c-equality: #FF7575;   /* 黃 — 平等 / 經濟軸 */
@@ -17,10 +17,10 @@
   --focus: #1B2430;  /* 目前未實際使用,保留給未來 focus 樣式擴充 */
 
   /* 結果頁四條進度條專用的粉彩填色(與上面文字/圖表用的深色識別色分開管理) */
-  --bar-equality: #d46868;   /* 紅色 / 經濟軸 */
-  --bar-liberty: #61c75d;    /* 綠色 / 社會軸 */
-  --bar-democracy: #d6d563;  /* 黃色 / 政治體制軸 */
-  --bar-individual: #3f94d9; /* 藍色 / 個人選擇軸 */
+  --bar-equality: #bd6262;   /* 紅色 / 經濟軸 */
+  --bar-liberty: #75ba6a;    /* 綠色 / 社會軸 */
+  --bar-democracy: #ccbb58;  /* 黃色 / 政治體制軸 */
+  --bar-individual: #5380b8; /* 藍色 / 個人選擇軸 */
 }
 
 /* ---------- 基本重置 / 版面 ---------- */
@@ -110,12 +110,12 @@ section:first-of-type .section-heading { margin-top: 0; }
 .content-card {
   /* 一般內文卡片,樣式跟 .intro-card / .q-card 系出同源(米色卡片+邊框) */
   background: var(--card);
-  border: 1px solid var(--rule);
-  padding: 28px;
+  border: 0px solid var(--rule);
+  padding: 22px;
 }
 .content-card ul {
   padding-left: 20px;
-  margin: 16px 0;
+  margin: 14px 0;
 }
 .content-card li { margin-bottom: 5px; }
 .content-card p:first-child { margin-top: 0; }
@@ -237,7 +237,7 @@ section:first-of-type .section-heading { margin-top: 0; }
    ============================================================ */
 .q-card {
   background: var(--card);
-  border: 1px solid var(--rule);
+  border: 2px solid var(--rule);
   padding: 32px 28px;
   margin-bottom: 24px;
 }
@@ -252,7 +252,7 @@ section:first-of-type .section-heading { margin-top: 0; }
 .q-item {
   /* 個別題目的具體敘述文字(例如某一條政策的名稱) */
   font-family: 'Noto Serif TC', serif;
-  font-weight: 600;
+  font-weight: 550;
   font-size: 18px;
   color: var(--ink);
   margin: 0 0 24px;
@@ -263,7 +263,7 @@ section:first-of-type .section-heading { margin-top: 0; }
   display: flex;
   justify-content: space-between;
   font-family: 'Noto Serif TC', serif;
-  font-weight: 600;
+  font-weight: 550;
   font-size: 17px;
   color: var(--ink);
   gap: 16px;
@@ -356,16 +356,16 @@ section:first-of-type .section-heading { margin-top: 0; }
    ============================================================ */
 .ideology-panel {
   background: var(--card);
-  border: 1.5px solid var(--ink); /* 邊框比其他卡片粗一點,強調這是結果頁的視覺重心 */
+  border: 2.5px solid #999999; /* 邊框比其他卡片粗一點,強調這是結果頁的視覺重心 改成灰色*/
   padding: 22px 28px;
   margin-bottom: 8px;
 }
 .match-sentence {
   /* 「你的意識形態和 OO 支持者最接近」那句話 */
   font-family: 'Noto Serif TC', serif;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 500;
-  margin: 0 0 16px;
+  margin: 0 0 15px;
   text-align: center;
 }
 .match-sentence strong { color: var(--c-democracy); } /* 政黨名稱用強調色標出來 */
@@ -422,8 +422,6 @@ section:first-of-type .section-heading { margin-top: 0; }
 
 .ibar-small-group {
   /* 政治體制 + 個人選擇這兩條小進度條的並排容器 */
-  font-family: 'Noto Serif TC', serif;
-  font-weight: 700;
   margin-top: 16px;
   padding-top: 14px;
   display: grid;
@@ -440,8 +438,8 @@ section:first-of-type .section-heading { margin-top: 0; }
 
 .ibar-overall-note {
   /* 結果卡片最下方,放 World Party Map 的「經濟/政治/個人最接近」三行(.notes-match-row) */
-  margin-top: 14px;
-  padding-top: 8px;
+  margin-top: 10px;
+  padding-top: 2px;
   border-top: 1px solid var(--rule);
   font-size: 13px;
   line-height: 1.6;
@@ -466,7 +464,7 @@ section:first-of-type .section-heading { margin-top: 0; }
   font-size: 12.5px;
   color: var(--ink-soft);
   line-height: 1.6;
-  border: 1px solid var(--rule);
+  border: 1.5px solid var(--rule);
   background: var(--card);
   padding: 10px 14px;
   margin-bottom: 14px;
@@ -538,7 +536,7 @@ svg.chart {
   width: 100%;
   height: auto;
   background: var(--card);
-  border: 1px solid var(--rule);
+  border: 1.5px solid var(--rule);
 }
 .chart text { font-family: 'JetBrains Mono', monospace; fill: var(--ink-soft); } /* 格線數字預設樣式 */
 .chart .axis-label { font-family: 'Noto Sans TC', sans-serif; fill: var(--ink); font-weight: 700; font-size: 13px; }
@@ -603,8 +601,8 @@ svg.chart {
   font-size: 13px;
   margin-top: 10px;
 }
-.status-msg.ok { color: var(--c-individual); }
-.status-msg.err { color: var(--c-democracy); }
+.status-msg.ok { color: #a63d40; }
+.status-msg.err { color: #4da63d; }
 
 .hidden { display: none !important; } /* 全站共用的畫面切換(intro/quiz/result 三個畫面互相切換用) */
 
@@ -770,14 +768,14 @@ svg.chart {
    之間的「查看完整資料表格」「回到測驗」等連結)
    ============================================================ */
 .internal-link {
-  color: #3576cc;
+  color: #124282;
   text-decoration: none;
-  border-bottom: 1px solid #3576cc;
+  border-bottom: 1px solid #124282;
   padding-bottom: 1px;
   font-weight: 500;
   transition: color 0.15s ease, border-color 0.15s ease;
 }
-.internal-link:visited { color: #3576cc; }
+.internal-link:visited { color: #124282; }
 .internal-link:hover,
 .internal-link:focus-visible {
   color: var(--c-democracy);
