@@ -601,8 +601,8 @@ svg.chart {
   font-size: 13px;
   margin-top: 10px;
 }
-.status-msg.ok { color: #a63d40; }
-.status-msg.err { color: #4da63d; }
+.status-msg.ok { color: #4da63d; }
+.status-msg.err { color: #a63d40; }
 
 .hidden { display: none !important; } /* 全站共用的畫面切換(intro/quiz/result 三個畫面互相切換用) */
 
