@@ -3,7 +3,7 @@
 /* ---------- 全域顏色 / 字體變數 ---------- */
 :root {
   --paper: #d3d2cf;       /* 頁面底色 灰色 */
-  --card: #ecebea;   /* 卡片/區塊背景色 白色 */
+  --card: #ecebea;   /* 卡片/區塊背景色 米白色 */
   --paper-line: #D8D3CF;  /* 格線顏色 */
   --ink: #1B2430;         /* 主要文字/邊框顏色(墨藍) */
   --ink-soft: #5B6470;    /* 次要文字顏色(較淡的墨藍灰) */
@@ -14,9 +14,6 @@
   --c-liberty: #3B5BA5;    /* 藍 — 自由 / 社會軸 */
   --c-democracy: #A63D40;  /* 黃 — 民主 / 政治體制軸(也拿來當「你的點」跟強調色用) */
   --c-individual: #9AED97; /* 綠 — 個人 / 個人選擇軸 */
-  --focus: #1B2430;  /* 目前未實際使用,保留給未來 focus 樣式擴充 */
-
-  /* 結果頁四條進度條專用的粉彩填色(與上面文字/圖表用的深色識別色分開管理) */
   --bar-equality: #bd6262;   /* 紅色 / 經濟軸 */
   --bar-liberty: #75ba6a;    /* 綠色 / 社會軸 */
   --bar-democracy: #ccbb58;  /* 黃色 / 政治體制軸 */
@@ -73,7 +70,7 @@ body {
 .masthead p {
   color: var(--ink-soft);
   font-size: 15px;
-  max-width: 56ch; /* 限制每行字數,避免大螢幕上一行太長不好讀 */
+  max-width: 75ch; /* 限制每行字數,避免大螢幕上一行太長不好讀 */
   margin: 0;
 }
 
@@ -82,7 +79,7 @@ body {
    ============================================================ */
 .intro-card {
   background: var(--card);
-  border: 1px solid var(--rule);
+  border: 2px solid var(--rule);
   padding: 28px;
 }
 .intro-card ul {
@@ -112,6 +109,7 @@ section:first-of-type .section-heading { margin-top: 0; }
   background: var(--card);
   border: 0px solid var(--rule);
   padding: 22px;
+  text-align: justify; 
 }
 .content-card ul {
   padding-left: 20px;
@@ -364,7 +362,7 @@ section:first-of-type .section-heading { margin-top: 0; }
   /* 「你的意識形態和 OO 支持者最接近」那句話 */
   font-family: 'Noto Serif TC', serif;
   font-size: 18px;
-  font-weight: 500;
+  font-weight: 600;
   margin: 0 0 15px;
   text-align: center;
 }
@@ -670,29 +668,12 @@ svg.chart {
 .dot-popover.arrow-top::after { top: -5px; }
 
 /* ============================================================
-   結果頁座標圖下方的白底文字區塊(目前 index.html 沒有用到,
-   保留供日後需要白底說明框時使用)
-   ============================================================ */
-.notes-block {
-  background: #FFFFFF; /* 特意用純白,跟其他區塊的米色系(--card)做出區隔 */
-  border: 1px solid var(--rule);
-  padding: 28px;
-  margin: 32px 0;
-  min-height: 120px;
-}
-.notes-block .placeholder {
-  color: var(--ink-soft);
-  text-align: center;
-  margin: 0;
-}
-
-/* ============================================================
    意識形態卡片(.ideology-panel)最上方的「World Party Map」標題,
    以及最下方「經濟/政治/個人最接近」三行政黨配對
    (app.js renderIdeologyPanel() / worldPartyMapRowsHTML())
    ============================================================ */
 .notes-title {
-  /* 方框上部的標題,呼應 .chart-title 的襯線粗體風格 */
+  /* 方框上部的標題 */
   font-family: 'Noto Sans TC', serif;
   font-weight: 600;
   font-size: 16px;
