@@ -234,19 +234,19 @@ export function politicalSystemLabel(v) {
 
 // 「政治自由」(民主分數)
 export function democracyLabel(v) {
-  if (v < 3.00) return "極權";
-  if (v < 5.00) return "威權";
-  if (v < 6.50) return "混合";
-  if (v < 8.00) return "有限民主";
-  return "完全民主";
+  if (v <= 2.80) return "極權";
+  if (v <= 4.60) return "威權";
+  if (v <  6.40) return "混合";
+  if (v <  8.20) return "有限民主";
+  return "高度民主";
 }
 
 // 「個人選擇」(個人分數)
 export function individualLabel(v) {
-  if (v < 3.00) return "反動";
-  if (v < 4.50) return "傳統";
-  if (v < 6.50) return "中立";
-  if (v < 8.00) return "進步";
+  if (v <= 2.80) return "反動";
+  if (v <= 4.60) return "傳統";
+  if (v <  6.40) return "中立";
+  if (v <  8.20) return "進步";
   return "基進";
 }
 
@@ -265,11 +265,11 @@ export function getTierLabel(dimension, v) {
 // 「社會」軸不隨結果變化,只有一段固定文字,不放在這個對照表裡
 export const ECONOMIC_EXPLANATIONS = {
   "共產": "強調平等和公有制，反對私有財產和自由市場",
-  "社會": "接近左翼的各種社會主義，通常主張部份生產資料公有和政府介入",
+  "社會": "傾向左翼的各種社會主義，通常主張部份生產資料公有和政府介入",
   "改良": "傾向中左翼，主張透過收入再分配等方式改良市場經濟的缺陷",
-  "中間": "支持市場經濟，但也支持政府補助的重要性",
+  "中間": "支持市場經濟，但也認同政府補助的重要性",
   "自由": "傾向中右翼，通常有以個人努力為中心的價值觀並支持有限的福利",
-  "資本": "接近右翼的資本主義，反對政府介入市場經濟並強調個人責任",
+  "資本": "傾向右翼的資本主義，反對政府介入市場經濟並強調個人責任",
   "放任": "認為私有財產絕不可侵犯，反對任何介入市場的行為",
 };
 
@@ -278,7 +278,7 @@ export const DEMOCRACY_EXPLANATIONS = {
   "威權": "政治權利受強人或軍隊控制，人民擁有一些基本人身自由",
   "混合": "介於民主和威權體制間，擁有基礎選舉",
   "有限民主": "擁有選舉和公民權利，同時亦強調秩序和政府權力",
-  "完全民主": "法治與公民權利完善，政府監控的權力被嚴格限制",
+  "完全民主": "法治與公民權利完善，政府監控的權力受限制",
 };
 
 export const INDIVIDUAL_EXPLANATIONS = {
