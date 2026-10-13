@@ -690,7 +690,7 @@ function renderPercentileText() {
   eqliEl.innerHTML =
     eq === null
       ? ""
-      : `<p>你比目前這裡 ${eq}% 的填答者更偏向平等</p><p>你比目前這裡 ${lib}% 的填答者更偏向自由</p>`;
+      : `<p>手機版可縮放查看，電腦版可以點擊圓點查看政黨</p><p>你比目前這裡 ${eq}% 的填答者更偏向平等</p><p>你比目前這裡 ${lib}% 的填答者更偏向自由</p>`;
 
   indemEl.innerHTML =
     dem === null
