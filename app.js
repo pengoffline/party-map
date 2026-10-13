@@ -353,7 +353,7 @@ function renderIdeologyPanel() {
     const countryZh = COUNTRY_NAME_ZH[party.country] || party.country;
     matchSentence = `你的意識形態和 <strong>${countryZh} ${party.party}</strong> 支持者最接近`;
   } else {
-    matchSentence = "你的意識形態不接近以下任何政黨的支持者";
+    matchSentence = "你的意識形態不接近以下各政黨支持者";
   }
 
   const econTier = economicLabel(scores.equality);
